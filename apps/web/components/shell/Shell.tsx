@@ -59,7 +59,13 @@ export function Shell({ tabs, enabled }: { tabs: Tab[]; enabled: boolean }) {
     }
     function onKeyDown(event: KeyboardEvent) {
       const shellState = { tab: state.tab, selection, help: state.help };
-      const context = { tabCount: tabs.length, itemCount, inField: isTextField(event.target) };
+      const withModifier = event.metaKey || event.ctrlKey || event.altKey;
+      const context = {
+        tabCount: tabs.length,
+        itemCount,
+        inField: isTextField(event.target),
+        withModifier,
+      };
       const action = route(event.key, shellState, context);
       if (action === null) {
         return;

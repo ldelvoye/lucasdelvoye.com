@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { route } from "../components/shell/keymap";
 
-const context = { tabCount: 3, itemCount: 4, inField: false };
+const context = { tabCount: 3, itemCount: 4, inField: false, withModifier: false };
 const idle = { tab: 0, selection: 0, help: false };
 
 describe("route", () => {
@@ -23,8 +23,9 @@ describe("route", () => {
     expect(route("o", idle, context)).toEqual({ type: "open" });
   });
 
-  it("ignores keys in text fields and unknown keys", () => {
+  it("ignores keys in text fields, modifier chords, and unknown keys", () => {
     expect(route("l", idle, { ...context, inField: true })).toBeNull();
+    expect(route("l", idle, { ...context, withModifier: true })).toBeNull();
     expect(route("x", idle, context)).toBeNull();
   });
 

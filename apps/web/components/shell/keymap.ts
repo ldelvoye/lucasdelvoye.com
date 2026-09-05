@@ -1,6 +1,11 @@
 export type ShellState = { tab: number; selection: number; help: boolean };
 
-export type KeyContext = { tabCount: number; itemCount: number; inField: boolean };
+export type KeyContext = {
+  tabCount: number;
+  itemCount: number;
+  inField: boolean;
+  withModifier: boolean;
+};
 
 export type Action =
   | { type: "tab"; index: number }
@@ -24,7 +29,7 @@ function canonical(key: string): string {
 }
 
 export function route(key: string, state: ShellState, context: KeyContext): Action | null {
-  if (context.inField) {
+  if (context.inField || context.withModifier) {
     return null;
   }
   if (state.help) {
