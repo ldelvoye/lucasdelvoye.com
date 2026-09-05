@@ -12,6 +12,8 @@ export function TabBar({ tabs, active, onSelect }: Props) {
     <nav className={styles.bar} role="tablist" aria-label="Tabs">
       {tabs.map((tab, index) => {
         const isActive = index === active;
+        const tabId = `tab-${tab.id}`;
+        const panelId = `panel-${tab.id}`;
         let className = styles.tab;
         let underline: ReactNode = null;
         if (isActive) {
@@ -21,9 +23,11 @@ export function TabBar({ tabs, active, onSelect }: Props) {
         return (
           <button
             key={tab.id}
+            id={tabId}
             type="button"
             role="tab"
             aria-selected={isActive}
+            aria-controls={panelId}
             className={className}
             onClick={() => onSelect(index)}
           >

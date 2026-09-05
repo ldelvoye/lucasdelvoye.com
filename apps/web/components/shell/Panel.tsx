@@ -18,6 +18,8 @@ export function Panel({ tabs, active, selections, onSelect }: Props) {
     <div className={styles.panel}>
       {tabs.map((tab, index) => {
         const isActive = index === active;
+        const tabId = `tab-${tab.id}`;
+        const panelId = `panel-${tab.id}`;
         let body: ReactNode;
         if (tab.kind === "prose") {
           body = tab.body;
@@ -33,7 +35,10 @@ export function Panel({ tabs, active, selections, onSelect }: Props) {
         return (
           <motion.section
             key={tab.id}
+            id={panelId}
             role="tabpanel"
+            aria-labelledby={tabId}
+            tabIndex={0}
             hidden={!isActive}
             className={styles.inner}
             initial={false}
