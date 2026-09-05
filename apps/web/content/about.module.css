@@ -1,0 +1,22 @@
+.about {
+  max-width: 72ch;
+}
+
+.about p {
+  margin: 0 0 1rem;
+}
+
+.links {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 0.25rem 2ch;
+  margin: 1.5rem 0 0;
+}
+
+.links dt {
+  color: var(--muted);
+}
+
+.links dd {
+  margin: 0;
+}
