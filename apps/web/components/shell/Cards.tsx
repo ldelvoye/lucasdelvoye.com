@@ -46,7 +46,7 @@ export function Cards({ items, selection, onSelect }: Props) {
 
   return (
     <div className={styles.split}>
-      <ul ref={listRef} className={styles.list} role="listbox" aria-label="Items">
+      <ul ref={listRef} className={styles.list}>
         {items.map((item, index) => {
           const isSelected = index === selection;
           let className = styles.card;
@@ -60,13 +60,7 @@ export function Cards({ items, selection, onSelect }: Props) {
             );
           }
           return (
-            <li
-              key={item.id}
-              role="option"
-              aria-selected={isSelected}
-              className={className}
-              onClick={() => onSelect(index)}
-            >
+            <li key={item.id} className={className} onClick={() => onSelect(index)}>
               <div className={styles.row}>
                 <span className={styles.title}>{item.title}</span>
                 <span className={styles.meta}>{item.meta}</span>
