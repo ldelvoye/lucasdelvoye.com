@@ -44,3 +44,9 @@ kbd {
   padding: 0 0.5ch;
   border-radius: 3px;
 }
+
+@media (prefers-reduced-motion: reduce) {
+  [data-intro] {
+    display: none;
+  }
+}

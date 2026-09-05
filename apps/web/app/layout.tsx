@@ -6,15 +6,30 @@ import "./globals.css";
 
 const mono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-mono" });
 
+const DESCRIPTION =
+  "Software engineer in San Francisco. The site is a terminal, and the terminal runs smorg.";
+
 export const metadata: Metadata = {
   title: "Lucas Delvoye",
-  description: "Software engineer in San Francisco. The site is a terminal, and the terminal runs smorg.",
+  description: DESCRIPTION,
+  openGraph: {
+    title: "Lucas Delvoye",
+    description: DESCRIPTION,
+    url: "https://lucasdelvoye.com",
+    siteName: "Lucas Delvoye",
+    type: "website",
+  },
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" className={mono.variable}>
-      <body>{children}</body>
+      <body>
+        <noscript>
+          <style>{"[data-intro]{display:none}"}</style>
+        </noscript>
+        {children}
+      </body>
     </html>
   );
 }
