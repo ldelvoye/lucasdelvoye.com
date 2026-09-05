@@ -1,0 +1,10 @@
+.panel {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.inner {
+  height: 100%;
+  overflow: auto;
+  padding: 1rem;
+}

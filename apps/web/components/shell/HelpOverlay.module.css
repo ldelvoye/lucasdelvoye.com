@@ -1,0 +1,41 @@
+.backdrop {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: rgb(1 4 9 / 0.7);
+}
+
+.box {
+  min-width: 20rem;
+  padding: 1rem 1.25rem;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.heading {
+  margin: 0 0 0.75rem;
+  color: var(--accent);
+}
+
+.list {
+  margin: 0;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 6ch 1fr;
+  gap: 2ch;
+  margin-bottom: 0.35rem;
+}
+
+.row dt,
+.row dd {
+  margin: 0;
+}
+
+.dismiss {
+  margin: 1rem 0 0;
+  color: var(--muted);
+}
