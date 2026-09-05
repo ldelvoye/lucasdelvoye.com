@@ -9,3 +9,9 @@
 .hint {
   white-space: nowrap;
 }
+
+@media (max-width: 48rem) {
+  .footer {
+    display: none;
+  }
+}

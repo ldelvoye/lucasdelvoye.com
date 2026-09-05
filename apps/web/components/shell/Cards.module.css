@@ -76,3 +76,18 @@
 .empty {
   color: var(--muted);
 }
+
+@media (max-width: 48rem) {
+  .split {
+    grid-template-columns: 1fr;
+  }
+
+  .pane {
+    display: none;
+  }
+
+  .inline {
+    display: block;
+    margin-top: 0.5rem;
+  }
+}
