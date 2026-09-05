@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { INTRO_BUDGET_MS, INTRO_SCRIPT } from "../components/intro/script";
+import { INTRO_BUDGET_MS, INTRO_SCRIPT, WIPE_MS } from "../components/intro/script";
 import { EMPTY_SCREEN, apply, resolve, schedule } from "../components/intro/sequence";
 
 const STEADY = { charDelay: 45, jitter: () => 0 };
@@ -15,11 +15,11 @@ describe("schedule", () => {
     }
   });
 
-  it("ends with done inside the budget", () => {
+  it("ends with done and leaves room for the wipe inside the budget", () => {
     const events = schedule(INTRO_SCRIPT, STEADY);
     const last = events[events.length - 1];
     expect(last.kind).toBe("done");
-    expect(last.at).toBeLessThanOrEqual(INTRO_BUDGET_MS);
+    expect(last.at + WIPE_MS).toBeLessThanOrEqual(INTRO_BUDGET_MS);
   });
 });
 
