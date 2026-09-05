@@ -49,7 +49,9 @@ export const ROLES: Role[] = [
 ];
 
 export function roleCard(role: Role): CardItem {
-  const id = role.company.toLowerCase().replace(/\s+/g, "-");
+  const lower = role.company.toLowerCase();
+  const slug = lower.replace(/\s+/g, "-");
+  const id = `${slug}-${role.start}`;
   const bullets = role.bullets.map((bullet) => <li key={bullet}>{bullet}</li>);
   return {
     id,
