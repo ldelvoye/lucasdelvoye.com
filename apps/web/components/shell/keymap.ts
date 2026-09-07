@@ -1,69 +1,71 @@
-export type ShellState = { tab: number; selection: number; help: boolean };
+export type Registered = {
+  count: number;
+  selected: number;
+  hasOpen: boolean;
+  hasBack: boolean;
+} | null;
 
 export type KeyContext = {
   tabCount: number;
-  itemCount: number;
+  activeTab: number;
+  registered: Registered;
   inField: boolean;
   withModifier: boolean;
 };
 
 export type Action =
   | { type: "tab"; index: number }
-  | { type: "select"; index: number }
+  | { type: "move"; index: number }
   | { type: "open" }
-  | { type: "help"; open: boolean };
+  | { type: "back" };
 
-const ALIASES: Record<string, string> = {
-  ArrowLeft: "h",
-  ArrowRight: "l",
-  ArrowUp: "k",
-  ArrowDown: "j",
-};
-
-function canonical(key: string): string {
-  const alias = ALIASES[key];
-  if (alias !== undefined) {
-    return alias;
-  }
-  return key;
-}
-
-export function route(key: string, state: ShellState, context: KeyContext): Action | null {
-  if (context.inField || context.withModifier) {
+export function route(key: string, context: KeyContext): Action | null {
+  if (context.inField) {
     return null;
   }
-  if (state.help) {
-    if (key === "Escape" || key === "?") {
-      return { type: "help", open: false };
+  if (context.withModifier) {
+    return null;
+  }
+  if (context.tabCount > 0 && key === "h") {
+    const shifted = context.activeTab - 1 + context.tabCount;
+    const index = shifted % context.tabCount;
+    return { type: "tab", index };
+  }
+  if (context.tabCount > 0 && key === "l") {
+    const shifted = context.activeTab + 1;
+    const index = shifted % context.tabCount;
+    return { type: "tab", index };
+  }
+  const registered = context.registered;
+  if (registered === null) {
+    return null;
+  }
+  if (key === "j") {
+    if (registered.count === 0) {
+      return null;
     }
-    return null;
+    const last = registered.count - 1;
+    const index = Math.min(registered.selected + 1, last);
+    return { type: "move", index };
   }
-  const pressed = canonical(key);
-  const { tabCount, itemCount } = context;
-  if (pressed === "h") {
-    const index = (state.tab - 1 + tabCount) % tabCount;
-    return { type: "tab", index };
+  if (key === "k") {
+    if (registered.count === 0) {
+      return null;
+    }
+    const index = Math.max(registered.selected - 1, 0);
+    return { type: "move", index };
   }
-  if (pressed === "l") {
-    const index = (state.tab + 1) % tabCount;
-    return { type: "tab", index };
-  }
-  if (pressed === "?") {
-    return { type: "help", open: true };
-  }
-  if (itemCount === 0) {
-    return null;
-  }
-  if (pressed === "j") {
-    const index = Math.min(state.selection + 1, itemCount - 1);
-    return { type: "select", index };
-  }
-  if (pressed === "k") {
-    const index = Math.max(state.selection - 1, 0);
-    return { type: "select", index };
-  }
-  if (pressed === "o") {
+  if (key === "o") {
+    if (!registered.hasOpen) {
+      return null;
+    }
     return { type: "open" };
+  }
+  if (key === "Escape") {
+    if (!registered.hasBack) {
+      return null;
+    }
+    return { type: "back" };
   }
   return null;
 }
