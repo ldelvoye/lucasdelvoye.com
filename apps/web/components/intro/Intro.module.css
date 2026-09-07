@@ -1,34 +1,85 @@
 .intro {
   position: absolute;
   inset: 0;
-  padding: 1rem;
-  background: var(--bg);
-  overflow: hidden;
+  overflow: auto;
+  z-index: 20;
+  background: var(--paper);
+  padding: clamp(16px, 2.6vw, 24px);
+  font-size: clamp(10.5px, 1.06vw, 13px);
+  line-height: 1.78;
+  font-variant-ligatures: none;
+  transition:
+    opacity var(--term-fade),
+    transform var(--term-lift);
+}
+
+.intro[data-leaving="true"] {
+  opacity: 0;
+  transform: translateY(-10px);
 }
 
 .screen {
   margin: 0;
   font: inherit;
   white-space: pre-wrap;
-  word-break: break-all;
+  overflow-wrap: anywhere;
+  color: var(--ink);
 }
 
-.arrow {
-  color: var(--accent);
+.prompt {
+  color: var(--pink);
   font-weight: 700;
 }
 
-.cursor {
+.arrow {
+  color: var(--blue);
+  font-weight: 700;
+}
+
+.step {
+  color: var(--ink-2);
+}
+
+.url {
+  color: var(--ink-3);
+}
+
+.hash {
+  color: var(--blue);
+  font-weight: 700;
+}
+
+.percent {
+  color: var(--ink);
+  font-weight: 700;
+}
+
+.done {
+  color: var(--ink-2);
+}
+
+.cellar {
+  color: var(--blue);
+  font-weight: 700;
+}
+
+.caret {
   display: inline-block;
-  width: 0.6em;
-  height: 1.1em;
-  vertical-align: text-bottom;
-  background: var(--fg);
+  width: 0.62em;
+  height: 1.06em;
+  vertical-align: -0.2em;
+  background: var(--pink);
   animation: blink 1s steps(1) infinite;
 }
 
 @keyframes blink {
-  50% {
+  0%,
+  55% {
+    opacity: 1;
+  }
+
+  56%,
+  100% {
     opacity: 0;
   }
 }

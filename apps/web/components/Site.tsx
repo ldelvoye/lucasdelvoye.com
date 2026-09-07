@@ -1,23 +1,77 @@
 "use client";
 
-import { useCallback, useState, type ReactNode } from "react";
-import { AnimatePresence } from "motion/react";
-import type { Tab } from "@/content/tabs";
+import { useCallback, useEffect, useRef, useState, type ReactElement, type ReactNode } from "react";
+import { useReducedMotion } from "motion/react";
+import { Atmosphere } from "./page/Atmosphere";
 import { Intro } from "./intro/Intro";
-import { Frame } from "./shell/Frame";
-import { Shell } from "./shell/Shell";
+import { Shell, type TabInfo } from "./shell/Shell";
+import { Chrome } from "./window/Chrome";
+import { Window } from "./window/Window";
 
-export function Site({ tabs }: { tabs: Tab[] }) {
-  const [introDone, setIntroDone] = useState(false);
-  const finish = useCallback(() => setIntroDone(true), []);
+export type Phase = "intro" | "expanding" | "full";
+
+export function Site({
+  tabs,
+  children,
+}: {
+  tabs: TabInfo[];
+  children: ReactNode;
+}): ReactElement {
+  const [phase, setPhase] = useState<Phase>("intro");
+  const [growing, setGrowing] = useState(false);
+  const reduced = useReducedMotion();
+  const reducedAppliedRef = useRef(false);
+
+  useEffect(() => {
+    if (reduced !== true) {
+      return;
+    }
+    if (reducedAppliedRef.current) {
+      return;
+    }
+    reducedAppliedRef.current = true;
+    setPhase("full");
+    setGrowing(true);
+  }, [reduced]);
+
+  const finishIntro = useCallback(() => {
+    setPhase((current) => {
+      if (current !== "intro") {
+        return current;
+      }
+      return "expanding";
+    });
+  }, []);
+
+  const startGrowth = useCallback(() => {
+    setGrowing(true);
+  }, []);
+
+  const finishGrowth = useCallback(() => {
+    setPhase("full");
+  }, []);
+
+  let atmosphere: ReactNode = null;
   let intro: ReactNode = null;
-  if (!introDone) {
-    intro = <Intro key="intro" onDone={finish} />;
+  if (phase !== "full") {
+    atmosphere = <Atmosphere dimmed={growing} />;
+    intro = <Intro onDone={finishIntro} leaving={growing} />;
   }
+
   return (
-    <Frame title="smorg — lucasdelvoye">
-      <Shell tabs={tabs} enabled={introDone} />
-      <AnimatePresence>{intro}</AnimatePresence>
-    </Frame>
+    <>
+      {atmosphere}
+      <Window
+        phase={phase}
+        growing={growing}
+        onGrowthStart={startGrowth}
+        onGrown={finishGrowth}
+      >
+        <Chrome />
+        <Shell tabs={tabs} phase={phase} intro={intro}>
+          {children}
+        </Shell>
+      </Window>
+    </>
   );
 }
