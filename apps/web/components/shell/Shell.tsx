@@ -1,101 +1,192 @@
 "use client";
 
-import { useEffect, useReducer } from "react";
-import { HELP_KEY, SHELL_KEYS, type Tab } from "@/content/tabs";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type ReactElement,
+  type ReactNode,
+} from "react";
+import type { Phase } from "@/components/Site";
 import { Footer } from "./Footer";
-import { HelpOverlay } from "./HelpOverlay";
-import { Panel } from "./Panel";
-import { TabBar } from "./TabBar";
-import { route, type Action } from "./keymap";
+import { Player } from "./Player";
+import { ShellContext, type ListRegistration, type ShellState } from "./ShellContext";
+import { Stage } from "./Stage";
+import { TabStrip } from "./TabStrip";
+import { route, type KeyContext, type Registered } from "./keymap";
 
-type State = { tab: number; selections: number[]; help: boolean };
+export type TabInfo = { id: string; label: string };
 
-function reduce(state: State, action: Action): State {
-  if (action.type === "tab") {
-    return { ...state, tab: action.index };
-  }
-  if (action.type === "select") {
-    const selections = [...state.selections];
-    selections[state.tab] = action.index;
-    return { ...state, selections };
-  }
-  if (action.type === "help") {
-    return { ...state, help: action.open };
-  }
-  return state;
-}
+const PAINT_TABS_MS = 420;
+const PAINT_PANE_MS = 530;
+const PAINT_PLAYER_MS = 837;
 
 function isTextField(target: EventTarget | null): boolean {
-  return target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement;
+  if (target instanceof HTMLInputElement) {
+    return true;
+  }
+  if (target instanceof HTMLTextAreaElement) {
+    return true;
+  }
+  if (target instanceof HTMLElement) {
+    return target.isContentEditable;
+  }
+  return false;
 }
 
-function selectedHref(tab: Tab, selection: number): string | undefined {
-  if (tab.kind !== "cards") {
-    return undefined;
-  }
-  const item = tab.items[selection];
-  if (item === undefined) {
-    return undefined;
-  }
-  return item.href;
-}
+export function Shell({
+  tabs,
+  phase,
+  intro,
+  children,
+}: {
+  tabs: TabInfo[];
+  phase: Phase;
+  intro: ReactNode;
+  children: ReactNode;
+}): ReactElement {
+  const first = tabs[0];
+  const [activeId, setActiveId] = useState(first.id);
+  const [registrations, setRegistrations] = useState<Record<string, ListRegistration>>({});
+  const [paint, setPaint] = useState(0);
+  const paintStarted = useRef(false);
+  const paintTimers = useRef<number[]>([]);
 
-export function Shell({ tabs, enabled }: { tabs: Tab[]; enabled: boolean }) {
-  const [state, dispatch] = useReducer(reduce, {
-    tab: 0,
-    selections: tabs.map(() => 0),
-    help: false,
-  });
-  const active = tabs[state.tab];
-  const selection = state.selections[state.tab];
-  let itemCount = 0;
-  if (active.kind === "cards") {
-    itemCount = active.items.length;
+  const register = useCallback((tabId: string, registration: ListRegistration) => {
+    setRegistrations((current) => ({ ...current, [tabId]: registration }));
+  }, []);
+
+  const unregister = useCallback((tabId: string) => {
+    setRegistrations((current) => {
+      const next = { ...current };
+      delete next[tabId];
+      return next;
+    });
+  }, []);
+
+  let registration: ListRegistration | null = null;
+  const found = registrations[activeId];
+  if (found !== undefined) {
+    registration = found;
   }
+
+  const value: ShellState = useMemo(() => {
+    return { activeId, tabCount: tabs.length, registration, register, unregister };
+  }, [activeId, tabs.length, registration, register, unregister]);
 
   useEffect(() => {
-    if (!enabled) {
+    if (phase === "intro") {
+      return;
+    }
+    if (paintStarted.current) {
+      return;
+    }
+    paintStarted.current = true;
+    let schedule: { at: number; step: number }[] = [
+      { at: PAINT_TABS_MS, step: 1 },
+      { at: PAINT_PANE_MS, step: 2 },
+      { at: PAINT_PLAYER_MS, step: 3 },
+    ];
+    if (phase === "full") {
+      schedule = [{ at: 0, step: 3 }];
+    }
+    for (const entry of schedule) {
+      const timer = window.setTimeout(() => {
+        setPaint(entry.step);
+      }, entry.at);
+      paintTimers.current.push(timer);
+    }
+  }, [phase]);
+
+  useEffect(() => {
+    const timers = paintTimers.current;
+    return () => {
+      for (const timer of timers) {
+        window.clearTimeout(timer);
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    if (phase !== "full") {
       return;
     }
     function onKeyDown(event: KeyboardEvent) {
-      const shellState = { tab: state.tab, selection, help: state.help };
       const withModifier = event.metaKey || event.ctrlKey || event.altKey;
-      const context = {
+      const inField = isTextField(event.target);
+      let registered: Registered = null;
+      if (registration !== null) {
+        registered = {
+          count: registration.count,
+          selected: registration.selected,
+          hasOpen: registration.open !== null,
+          hasBack: registration.onBack !== null,
+        };
+      }
+      const activeIndex = tabs.findIndex((tab) => tab.id === activeId);
+      const context: KeyContext = {
         tabCount: tabs.length,
-        itemCount,
-        inField: isTextField(event.target),
+        activeTab: activeIndex,
+        registered,
+        inField,
         withModifier,
       };
-      const action = route(event.key, shellState, context);
+      const action = route(event.key, context);
       if (action === null) {
         return;
       }
       event.preventDefault();
-      if (action.type === "open") {
-        const href = selectedHref(active, selection);
-        if (href !== undefined) {
-          window.open(href, "_blank", "noopener");
+      if (action.type === "tab") {
+        const next = tabs[action.index];
+        if (next !== undefined) {
+          setActiveId(next.id);
         }
         return;
       }
-      dispatch(action);
+      if (registration === null) {
+        return;
+      }
+      if (action.type === "move") {
+        registration.onMove(action.index);
+        return;
+      }
+      if (action.type === "open") {
+        const href = registration.open;
+        if (href === null) {
+          return;
+        }
+        window.open(href, "_blank", "noopener");
+        return;
+      }
+      const back = registration.onBack;
+      if (back === null) {
+        return;
+      }
+      back();
     }
     window.addEventListener("keydown", onKeyDown);
-    return () => window.removeEventListener("keydown", onKeyDown);
-  }, [enabled, state.tab, state.help, selection, itemCount, tabs.length, active]);
+    return () => {
+      window.removeEventListener("keydown", onKeyDown);
+    };
+  }, [phase, tabs, activeId, registration]);
 
-  const hints = [...SHELL_KEYS, ...active.keys, HELP_KEY];
   return (
-    <>
-      <TabBar tabs={tabs} active={state.tab} onSelect={(index) => dispatch({ type: "tab", index })} />
-      <Panel
-        tabs={tabs}
-        active={state.tab}
-        selections={state.selections}
-        onSelect={(index) => dispatch({ type: "select", index })}
-      />
-      <Footer hints={hints} />
-      <HelpOverlay open={state.help} hints={hints} onClose={() => dispatch({ type: "help", open: false })} />
-    </>
+    <ShellContext.Provider value={value}>
+      <div data-body>
+        {intro}
+        <div data-dash>
+          <TabStrip tabs={tabs} activeId={activeId} onSelect={setActiveId} drawn={paint >= 1} />
+          <div data-viewport data-region="pane" data-drawn={paint >= 2}>
+            <Stage tabs={tabs} activeId={activeId}>
+              {children}
+            </Stage>
+          </div>
+          <Player drawn={paint >= 3} />
+        </div>
+      </div>
+      <Footer />
+    </ShellContext.Provider>
   );
 }

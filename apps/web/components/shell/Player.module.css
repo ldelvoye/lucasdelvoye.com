@@ -1,0 +1,63 @@
+.dockwrap {
+  flex: 0 0 auto;
+  padding: 15px clamp(24px, 2.8vw, 36px) clamp(16px, 2vw, 24px) clamp(16px, 2vw, 24px);
+}
+
+.cover {
+  display: inline-block;
+  vertical-align: middle;
+  width: 39px;
+  aspect-ratio: 1 / 1;
+}
+
+.title {
+  color: var(--ink);
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.artist {
+  color: var(--ink-2);
+  white-space: nowrap;
+}
+
+.dock .bar {
+  margin-top: 0;
+  margin-left: auto;
+  font-size: 12px;
+}
+
+.time {
+  color: var(--ink-2);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.state {
+  color: var(--pink);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  white-space: nowrap;
+}
+
+@media (max-width: 48rem) {
+  .dockwrap {
+    padding: 14px 12px 12px;
+  }
+
+  .artist {
+    display: none;
+  }
+
+  .time {
+    font-size: 10px;
+  }
+
+  .dock .bar {
+    font-size: 11px;
+  }
+}
