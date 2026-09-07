@@ -1,0 +1,57 @@
+:root {
+  --paper: #ffffff;
+  --ink: #232a3d;
+  --ink-2: #56607c;
+  --ink-3: #7b86a1;
+  --line-soft: #dde5f5;
+  --page-pink: #ffd9e8;
+  --page-blue: #cfe1ff;
+  --blue: #3a6ec2;
+  --blue-block: #c6dbff;
+  --blue-field: #dde8ff;
+  --pink: #d4437d;
+  --pink-block: #ffb3d1;
+  --pink-hover: #ffe0ec;
+  --pink-field: #ffe7f1;
+  --seg-blue: #79a6ea;
+  --seg-violet: #a294ee;
+  --seg-mint: #6ec7a6;
+
+  --mono: var(--font-mono), ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  --out: cubic-bezier(0.16, 1, 0.3, 1);
+  --in: cubic-bezier(0.4, 0, 1, 1);
+
+  --expand: 440ms var(--out);
+  --wash: 220ms var(--out);
+  --swap-in: 300ms var(--out);
+  --swap-out: 220ms var(--out);
+  --cross: 200ms ease;
+  --cross-delay: 180ms;
+  --hover: 130ms ease;
+  --show: 150ms ease;
+  --gutter-fade: 120ms ease;
+  --term-fade: 220ms ease;
+  --term-lift: 260ms var(--in);
+  --page-fade: 430ms ease;
+  --furniture-fade: 260ms ease;
+  --furniture-lift: 320ms ease;
+  --rim: 620ms var(--out);
+
+  --bar-h: 36px;
+  --bar-h-full: 42px;
+  --status-h: 30px;
+  --status-h-sm: 28px;
+
+  --win-w: min(880px, 92vw);
+  --win-h: min(544px, 74vh);
+  --win-w-sm: calc(100vw - 32px);
+  --win-h-sm: calc(100dvh - 32px);
+  --win-radius: 14px;
+  --win-radius-sm: 12px;
+  --win-shadow:
+    0 26px 48px -28px rgba(35, 42, 61, 0.5),
+    0 6px 14px -8px rgba(35, 42, 61, 0.18);
+
+  --pane-radius: 12px;
+}
