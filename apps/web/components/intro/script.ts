@@ -1,7 +1,7 @@
 export const SMORG_VERSION = "1.4.4";
 export const PROMPT = "~ $ ";
 export const INTRO_BUDGET_MS = 5000;
-export const WIPE_MS = 400;
+export const EXPANSION_MS = 690;
 
 export type Step =
   | { kind: "print"; text: string }
@@ -10,7 +10,7 @@ export type Step =
   | { kind: "pause"; ms: number }
   | { kind: "clear" };
 
-const TARBALL = `https://github.com/ldelvoye/smorg/archive/refs/tags/v${SMORG_VERSION}.tar.gz`;
+const TARBALL = `https://github.com/ldelvoye/smorg/releases/download/v${SMORG_VERSION}/smorg-${SMORG_VERSION}.tar.gz`;
 const CELLAR = `/opt/homebrew/Cellar/smorg/${SMORG_VERSION}`;
 
 export const INTRO_SCRIPT: Step[] = [
