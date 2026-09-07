@@ -1,0 +1,28 @@
+.bar {
+  position: relative;
+  display: inline-block;
+  margin-top: 20px;
+  font-size: 13px;
+  font-weight: 700;
+  white-space: pre;
+}
+
+.track {
+  color: var(--blue-block);
+}
+
+.fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  overflow: hidden;
+  color: var(--pink);
+  white-space: pre;
+}
+
+@media (max-width: 48rem) {
+  .bar {
+    font-size: 12px;
+  }
+}

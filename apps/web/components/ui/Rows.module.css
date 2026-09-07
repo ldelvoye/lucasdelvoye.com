@@ -1,0 +1,146 @@
+.rows {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
+.scroll {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 14px;
+  scrollbar-width: none;
+}
+
+.scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.list {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.wash {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 0;
+  opacity: 0;
+  background: var(--pink-block);
+  pointer-events: none;
+  transition:
+    transform var(--wash),
+    height var(--wash),
+    opacity var(--show);
+}
+
+.wash[data-show="true"] {
+  opacity: 1;
+}
+
+.row {
+  position: relative;
+  z-index: 1;
+  cursor: pointer;
+  display: grid;
+  grid-template-columns: 1.8ch 2.4ch minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 0 5px;
+  width: 100%;
+  text-decoration: none;
+  padding: 10px 9px 10px 5px;
+  transition: background var(--hover);
+}
+
+.cursor {
+  color: transparent;
+  line-height: 1.5;
+  transition: color var(--hover);
+}
+
+.glyph {
+  line-height: 1.5;
+  color: var(--blue);
+}
+
+.main {
+  min-width: 0;
+}
+
+.title {
+  display: block;
+  font-size: 13.5px;
+  color: var(--ink);
+  font-weight: 500;
+}
+
+.subtitle {
+  display: block;
+  font-size: 11.5px;
+  color: var(--ink-2);
+  line-height: 1.55;
+  margin-top: 2px;
+}
+
+.meta {
+  text-align: right;
+  font-size: 11px;
+  color: var(--ink-3);
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  letter-spacing: 0.02em;
+}
+
+.row:hover {
+  background: var(--pink-hover);
+}
+
+.row:hover .cursor {
+  color: var(--pink);
+}
+
+a.row:hover .title {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.row[data-selected="true"]:hover {
+  background: transparent;
+}
+
+.row[data-selected="true"] .cursor {
+  color: var(--ink);
+}
+
+.row[data-selected="true"] .title {
+  color: var(--ink);
+  font-weight: 700;
+}
+
+.row[data-selected="true"] .subtitle,
+.row[data-selected="true"] .meta,
+.row[data-selected="true"] .glyph {
+  color: var(--ink);
+}
+
+@media (max-width: 48rem) {
+  .row {
+    grid-template-columns: 1.8ch 2.4ch minmax(0, 1fr);
+  }
+
+  .meta {
+    grid-column: 1 / -1;
+    text-align: left;
+    padding-left: 4.2ch;
+    margin-top: 5px;
+    white-space: normal;
+  }
+}
