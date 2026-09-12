@@ -1,72 +1,75 @@
-.grid {
+.session {
   flex: 1;
   min-height: 0;
   display: grid;
-  gap: clamp(18px, 2.4vw, 28px);
-  grid-template-columns: minmax(0, 1fr) minmax(0, 320px);
-  grid-template-rows: auto minmax(0, 1fr);
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: baseline;
+  align-content: safe center;
+  column-gap: clamp(20px, 2.8vw, 40px);
+  row-gap: clamp(16px, 2.8vh, 28px);
 }
 
-.grid > * {
-  min-width: 0;
-}
-
-.aboutBox {
+.rule {
   grid-column: 1 / -1;
-  grid-row: 1;
+  align-self: start;
+  height: 0;
+  border-top: 1px solid var(--line-soft);
 }
 
-.bioBox {
-  grid-column: 1;
-  grid-row: 2;
-}
-
-.linksBox {
-  grid-column: 2;
-  grid-row: 2;
-}
-
-.neo {
-  display: flex;
-  gap: clamp(20px, 2.6vw, 34px);
-  align-items: stretch;
-}
-
-.art {
-  width: clamp(96px, 18.4vw, 256px);
-  aspect-ratio: 1 / 1;
-  flex: none;
-}
-
-.info {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
+.cmd {
+  margin: 0;
+  white-space: nowrap;
+  font-size: 13px;
+  line-height: 1.5;
 }
 
 .host {
-  align-self: flex-start;
-  padding-bottom: 6px;
-  margin-bottom: 16px;
-  border-bottom: 2px solid var(--ink);
-  font-size: 14px;
-  font-weight: 700;
+  color: var(--ink-3);
+  font-size: 11px;
   letter-spacing: 0.02em;
-  color: var(--ink);
 }
 
 .at {
   color: var(--pink);
+  font-weight: 700;
 }
 
-.info .facts {
-  font-size: 12.5px;
+.sigil {
+  color: var(--ink-3);
+  padding: 0 7px 0 6px;
+}
+
+.verb {
+  color: var(--ink);
+  font-weight: 700;
+}
+
+.arg {
+  margin-left: 1ch;
+  color: var(--blue);
+  font-weight: 500;
+}
+
+.out {
+  min-width: 0;
+}
+
+.focus {
+  margin: 0;
+  font-size: clamp(16.5px, 1.6vw, 21px);
+  font-weight: 700;
+  line-height: 1.4;
+  color: var(--ink);
+}
+
+.sep {
+  color: var(--pink);
+  padding: 0 2px;
 }
 
 .prose p {
   margin: 0 0 16px;
-  max-width: 60ch;
+  max-width: 72ch;
   font-size: clamp(13.5px, 1.05vw, 15.5px);
   line-height: 1.9;
   color: var(--ink-2);
@@ -80,26 +83,31 @@
   margin-bottom: 0;
 }
 
+.links {
+  max-width: 22rem;
+  margin-top: -10px;
+}
+
 @media (max-width: 48rem) {
-  .grid {
+  .session {
     grid-template-columns: minmax(0, 1fr);
-    grid-template-rows: auto;
+    align-content: start;
+    row-gap: 0;
   }
 
-  .aboutBox,
-  .bioBox,
-  .linksBox {
-    grid-column: auto;
-    grid-row: auto;
+  .cmd {
+    padding-bottom: 9px;
   }
 
-  .neo {
-    flex-direction: column;
-    gap: 20px;
+  .out {
+    padding-bottom: 18px;
   }
 
-  .art {
-    width: 176px;
-    align-self: center;
+  .rule {
+    margin-bottom: 18px;
+  }
+
+  .links {
+    margin-top: 0;
   }
 }

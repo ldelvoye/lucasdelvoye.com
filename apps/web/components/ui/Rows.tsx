@@ -19,11 +19,18 @@ export function Rows({
   rows,
   selected,
   onSelect,
+  columns,
 }: {
   rows: Row[];
   selected: number;
   onSelect: (index: number) => void;
+  columns?: "list" | "ls";
 }): ReactElement {
+  let layout: "list" | "ls" = "list";
+  if (columns !== undefined) {
+    layout = columns;
+  }
+
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const listRef = useRef<HTMLDivElement | null>(null);
   const previousRef = useRef<number>(selected);
@@ -142,7 +149,7 @@ export function Rows({
   });
 
   return (
-    <div className={styles.rows}>
+    <div className={styles.rows} data-columns={layout}>
       <div className={styles.scroll} ref={scrollRef} onScroll={syncGutter}>
         <div className={styles.list} ref={listRef}>
           <span className={styles.wash} data-show={washShown} style={washStyle} aria-hidden="true" />

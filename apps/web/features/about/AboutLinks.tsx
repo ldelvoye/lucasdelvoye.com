@@ -1,7 +1,6 @@
 "use client";
 
 import { useCallback, useState, type ReactElement } from "react";
-import { Box } from "@/components/ui/Box";
 import { Rows, type Row } from "@/components/ui/Rows";
 import { useListKeys } from "@/components/shell/useListKeys";
 import { LINKS } from "./content";
@@ -45,8 +44,8 @@ export function AboutLinks({
   });
 
   return (
-    <Box title="links" count={LINKS.length} focused className={className}>
-      <Rows rows={rows} selected={selected} onSelect={onMove} />
-    </Box>
+    <div className={className}>
+      <Rows rows={rows} selected={selected} onSelect={onMove} columns="ls" />
+    </div>
   );
 }

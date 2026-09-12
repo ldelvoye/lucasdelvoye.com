@@ -1,40 +1,58 @@
-import type { ReactElement } from "react";
-import { PixelImage } from "@/components/pixels/PixelArt";
-import { Box } from "@/components/ui/Box";
-import { KeyValue } from "@/components/ui/KeyValue";
+import type { ReactElement, ReactNode } from "react";
 import { AboutLinks } from "./AboutLinks";
-import { BIO, FACTS, HOST_NAME, HOST_USER, PORTRAIT_SIZE, PORTRAIT_SRC } from "./content";
+import { BIO, FOCUS, HOST_NAME, HOST_USER } from "./content";
 import styles from "./About.module.css";
 
 const TAB_ID = "about";
 
+function Prompt({ verb, arg }: { verb: string; arg?: string }): ReactElement {
+  let argument: ReactNode = null;
+  if (arg !== undefined) {
+    argument = <span className={styles.arg}>{arg}</span>;
+  }
+  return (
+    <p className={styles.cmd}>
+      <span className={styles.host}>
+        {HOST_USER}
+        <span className={styles.at}>@</span>
+        {HOST_NAME}
+      </span>
+      <span className={styles.sigil}>$</span>
+      <span className={styles.verb}>{verb}</span>
+      {argument}
+    </p>
+  );
+}
+
 export function AboutPanel(): ReactElement {
   const paragraphs = BIO.map((text) => <p key={text}>{text}</p>);
+
+  const focus: ReactNode[] = [];
+  FOCUS.forEach((term, index) => {
+    if (index > 0) {
+      focus.push(
+        <span key={`sep-${index}`} className={styles.sep} aria-hidden="true">
+          ·
+        </span>,
+      );
+    }
+    focus.push(term);
+  });
+
   return (
-    <div className={styles.grid}>
-      <Box title="about" className={styles.aboutBox}>
-        <div className={styles.neo}>
-          <span className={styles.art}>
-            <PixelImage
-              src={PORTRAIT_SRC}
-              size={PORTRAIT_SIZE}
-              label="Portrait of Lucas Delvoye as terminal pixel art"
-            />
-          </span>
-          <div className={styles.info}>
-            <div className={styles.host}>
-              {HOST_USER}
-              <span className={styles.at}>@</span>
-              {HOST_NAME}
-            </div>
-            <KeyValue entries={FACTS} wide className={styles.facts} />
-          </div>
-        </div>
-      </Box>
-      <Box title="bio" className={styles.bioBox}>
-        <div className={styles.prose}>{paragraphs}</div>
-      </Box>
-      <AboutLinks tabId={TAB_ID} className={styles.linksBox} />
+    <div className={styles.session}>
+      <Prompt verb="whoami" />
+      <div className={styles.out}>
+        <p className={styles.focus}>{focus}</p>
+      </div>
+      <span className={styles.rule} aria-hidden="true" />
+      <Prompt verb="cat" arg="bio" />
+      <div className={`${styles.out} ${styles.prose}`}>{paragraphs}</div>
+      <span className={styles.rule} aria-hidden="true" />
+      <Prompt verb="ls" arg="links" />
+      <div className={styles.out}>
+        <AboutLinks tabId={TAB_ID} className={styles.links} />
+      </div>
     </div>
   );
 }

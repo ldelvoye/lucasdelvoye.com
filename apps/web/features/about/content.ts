@@ -1,20 +1,9 @@
-import type { Entry } from "@/components/ui/KeyValue";
-
 export type Link = { id: string; label: string; value: string; href: string | null };
 
 export const HOST_USER = "lucas";
 export const HOST_NAME = "sf";
 
-export const PORTRAIT_SRC = "/portrait.svg";
-export const PORTRAIT_SIZE = 32;
-
-export const FACTS: Entry[] = [
-  { label: "name", value: "Lucas Delvoye", tone: "strong" },
-  { label: "role", value: "Software Engineer", tone: "plain" },
-  { label: "location", value: "San Francisco", tone: "plain" },
-  { label: "focus", value: "infrastructure · developer tooling", tone: "plain" },
-  { label: "source", value: "github.com/ldelvoye", tone: "link" },
-];
+export const FOCUS: string[] = ["infrastructure", "developer tooling"];
 
 export const BIO: string[] = [
   "I'm a software engineer in San Francisco. I work on infrastructure and developer tooling, and I like building things that live in the terminal.",
