@@ -4,8 +4,8 @@ import type { ReactElement } from "react";
 import { formatTime } from "@/components/shell/Player";
 import { useTicker } from "@/components/shell/useTicker";
 import { CharBar } from "@/components/ui/CharBar";
+import { relativeTime } from "@/lib/time";
 import { Cover } from "./Cover";
-import { relativeTime } from "./history";
 import type { NowPlaying } from "./model";
 import styles from "./Spotify.module.css";
 

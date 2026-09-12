@@ -4,7 +4,6 @@ import {
   logTime,
   mergePlays,
   mixOf,
-  relativeTime,
   timelineOf,
   weekOf,
 } from "../features/spotify/history";
@@ -105,16 +104,6 @@ describe("timelineOf", () => {
     expect(days[6]?.bins).toEqual([0, 0, 0, 0, 1, 0]);
     expect(days[5]?.bins).toEqual([0, 0, 1, 0, 0, 0]);
     expect(days[0]?.bins).toEqual([0, 0, 0, 0, 0, 0]);
-  });
-});
-
-describe("relativeTime", () => {
-  it("crosses the just-now, minute, hour, and day boundaries", () => {
-    expect(relativeTime(agoIso(30 * 1000), NOW)).toBe("just now");
-    expect(relativeTime(agoIso(59 * 60 * 1000), NOW)).toBe("59m ago");
-    expect(relativeTime(agoIso(60 * 60 * 1000), NOW)).toBe("1h ago");
-    expect(relativeTime(agoIso(23 * HOUR + 59 * 60 * 1000), NOW)).toBe("23h ago");
-    expect(relativeTime(agoIso(24 * HOUR), NOW)).toBe("1d ago");
   });
 });
 
