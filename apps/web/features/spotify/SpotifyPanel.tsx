@@ -12,7 +12,7 @@ import styles from "./Spotify.module.css";
 const TAB_ID = "spotify";
 const PANE_COVER = 300;
 const RECENT_COUNT = 10;
-const WATCH_SECONDS = 60;
+const WATCH_SECONDS = 15;
 
 async function loadPanel() {
   const [current, artists, plays, listening] = await Promise.all([

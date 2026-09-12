@@ -4,9 +4,9 @@ import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import type { NowPlaying } from "@/features/spotify/model";
 
-const AFTER_END_MS = 1500;
-const ENDED_RETRY_MS = 15 * 1000;
-const EVERY_MS = 60 * 1000;
+const AFTER_END_MS = 1000;
+const ENDED_RETRY_MS = 4 * 1000;
+const EVERY_MS = 15 * 1000;
 
 function delayFor(now: NowPlaying | null): number {
   if (now === null) {

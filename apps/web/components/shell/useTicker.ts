@@ -5,6 +5,8 @@ import type { NowPlaying } from "@/features/spotify/model";
 
 const TICK_MS = 1000;
 
+type Ticker = { source: NowPlaying | null; elapsed: number };
+
 function baseElapsed(now: NowPlaying | null): number {
   if (now === null) {
     return 0;
@@ -13,7 +15,16 @@ function baseElapsed(now: NowPlaying | null): number {
 }
 
 export function useTicker(now: NowPlaying | null): number {
-  const [elapsed, setElapsed] = useState(() => baseElapsed(now));
+  const [ticker, setTicker] = useState<Ticker>(() => {
+    return { source: now, elapsed: baseElapsed(now) };
+  });
+
+  let elapsed = ticker.elapsed;
+  if (ticker.source !== now) {
+    const reset = baseElapsed(now);
+    setTicker({ source: now, elapsed: reset });
+    elapsed = reset;
+  }
 
   useEffect(() => {
     if (now === null) {
@@ -26,7 +37,7 @@ export function useTicker(now: NowPlaying | null): number {
       const since = Date.now() - now.at;
       const raw = now.progressMs + since;
       const capped = Math.min(now.durationMs, raw);
-      setElapsed(capped);
+      setTicker({ source: now, elapsed: capped });
     }, TICK_MS);
     return () => {
       window.clearInterval(timer);

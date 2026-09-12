@@ -1,14 +1,16 @@
 import { memo } from "@/lib/memo";
-import { coverUrl, currentlyPlaying, topArtistsShort } from "./api";
+import { coverUrl, currentlyPlaying, topArtistsShort, type Current } from "./api";
 import { mixOf, timelineOf, weekOf } from "./history";
 import type { MixEntry, NowPlaying, Play, TimelineDay, TopArtist, Week } from "./model";
 import { history, ready } from "./store";
 
-const NOW_TTL_MS = 20 * 1000;
+const NOW_TTL_MS = 5 * 1000;
 const TOP_TTL_MS = 60 * 60 * 1000;
 const AVATAR_WIDTH = 160;
 
-const current = memo(NOW_TTL_MS, async () => {
+type Observed = { at: number; playing: Current | null };
+
+const current = memo(NOW_TTL_MS, async (): Promise<Observed> => {
   const at = Date.now();
   const playing = await currentlyPlaying();
   return { at, playing };
@@ -16,8 +18,23 @@ const current = memo(NOW_TTL_MS, async () => {
 
 const top = memo(TOP_TTL_MS, topArtistsShort);
 
+function hasEnded(observed: Observed): boolean {
+  if (observed.playing === null) {
+    return false;
+  }
+  if (!observed.playing.playing) {
+    return false;
+  }
+  const remaining = observed.playing.track.duration_ms - observed.playing.progressMs;
+  const endsAt = observed.at + remaining;
+  return Date.now() >= endsAt;
+}
+
 export async function now(coverWidth: number): Promise<NowPlaying | null> {
-  const observed = await current();
+  let observed = await current.get();
+  if (hasEnded(observed)) {
+    observed = await current.refresh();
+  }
   if (observed.playing !== null) {
     const track = observed.playing.track;
     const cover = coverUrl(track.album.images, coverWidth);
@@ -57,7 +74,7 @@ export async function now(coverWidth: number): Promise<NowPlaying | null> {
 }
 
 export async function topArtists(): Promise<TopArtist[]> {
-  const artists = await top();
+  const artists = await top.get();
   return artists.map((artist) => {
     let images: { url: string; width: number; height: number }[] = [];
     if (artist.images !== undefined) {
