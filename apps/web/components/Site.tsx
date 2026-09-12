@@ -12,9 +12,11 @@ export type Phase = "intro" | "expanding" | "full";
 
 export function Site({
   tabs,
+  player,
   children,
 }: {
   tabs: TabInfo[];
+  player: ReactNode;
   children: ReactNode;
 }): ReactElement {
   const [phase, setPhase] = useState<Phase>("intro");
@@ -68,7 +70,7 @@ export function Site({
         onGrown={finishGrowth}
       >
         <Chrome />
-        <Shell tabs={tabs} phase={phase} intro={intro}>
+        <Shell tabs={tabs} phase={phase} intro={intro} player={player}>
           {children}
         </Shell>
       </Window>

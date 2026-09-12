@@ -18,6 +18,11 @@
   text-overflow: ellipsis;
 }
 
+.dim {
+  color: var(--ink-3);
+  font-weight: 500;
+}
+
 .artist {
   color: var(--ink-2);
   white-space: nowrap;

@@ -1,5 +1,8 @@
+import { Suspense } from "react";
 import { Site } from "@/components/Site";
 import { Pane } from "@/components/shell/Pane";
+import { Player } from "@/components/shell/Player";
+import { PlayerNow } from "@/features/spotify/PlayerNow";
 import { TABS } from "@/features/tabs";
 
 export default function Home() {
@@ -8,11 +11,29 @@ export default function Home() {
   });
   const panes = TABS.map((tab) => {
     const Panel = tab.Panel;
+    let content = <Panel />;
+    if (tab.Fallback !== null) {
+      const Fallback = tab.Fallback;
+      content = (
+        <Suspense fallback={<Fallback />}>
+          <Panel />
+        </Suspense>
+      );
+    }
     return (
       <Pane key={tab.id} id={tab.id} label={tab.label}>
-        <Panel />
+        {content}
       </Pane>
     );
   });
-  return <Site tabs={tabs}>{panes}</Site>;
+  const player = (
+    <Suspense fallback={<Player now={null} pending />}>
+      <PlayerNow />
+    </Suspense>
+  );
+  return (
+    <Site tabs={tabs} player={player}>
+      {panes}
+    </Site>
+  );
 }

@@ -12,7 +12,7 @@ import {
 import type { Phase } from "@/components/Site";
 import { isWebLink } from "@/components/ui/links";
 import { Footer } from "./Footer";
-import { Player } from "./Player";
+import { PlayerDock } from "./Player";
 import { ShellContext, type ListRegistration, type ShellState } from "./ShellContext";
 import { Stage } from "./Stage";
 import { TabStrip } from "./TabStrip";
@@ -41,11 +41,13 @@ export function Shell({
   tabs,
   phase,
   intro,
+  player,
   children,
 }: {
   tabs: TabInfo[];
   phase: Phase;
   intro: ReactNode;
+  player: ReactNode;
   children: ReactNode;
 }): ReactElement {
   const first = tabs[0];
@@ -188,7 +190,7 @@ export function Shell({
               {children}
             </Stage>
           </div>
-          <Player drawn={paint >= 3} />
+          <PlayerDock drawn={paint >= 3}>{player}</PlayerDock>
         </div>
       </div>
       <Footer />
