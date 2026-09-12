@@ -4,8 +4,10 @@ import { Pane } from "@/components/shell/Pane";
 import { Player } from "@/components/shell/Player";
 import { PlayerNow } from "@/features/spotify/PlayerNow";
 import { TABS } from "@/features/tabs";
+import { smorgVersion } from "@/lib/smorg";
 
-export default function Home() {
+export default async function Home() {
+  const version = await smorgVersion();
   const tabs = TABS.map((tab) => {
     return { id: tab.id, label: tab.label };
   });
@@ -32,7 +34,7 @@ export default function Home() {
     </Suspense>
   );
   return (
-    <Site tabs={tabs} player={player}>
+    <Site version={version} tabs={tabs} player={player}>
       {panes}
     </Site>
   );

@@ -1,8 +1,7 @@
 import type { ReactElement } from "react";
-import { SMORG_VERSION } from "@/components/intro/script";
 import styles from "./Chrome.module.css";
 
-export function Chrome(): ReactElement {
+export function Chrome({ version }: { version: string }): ReactElement {
   return (
     <div className={styles.chrome} data-chrome>
       <div className={`${styles.layer} ${styles.win}`} data-chrome-win>
@@ -19,7 +18,7 @@ export function Chrome(): ReactElement {
       <div className={`${styles.layer} ${styles.app}`} data-chrome-app>
         <span className={styles.mark} aria-hidden="true" />
         <span className={styles.powered}>
-          powered by <b>smorg</b> v{SMORG_VERSION}
+          powered by <b>smorg</b> v{version}
         </span>
         <span className={styles.vrule} aria-hidden="true" />
         <span className={styles.who}>

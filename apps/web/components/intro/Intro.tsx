@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type ReactElement, type ReactNode } from "react";
-import { INTRO_SCRIPT, PROMPT } from "./script";
+import { PROMPT, introScript } from "./script";
 import { EMPTY_SCREEN, apply, resolve, schedule, type Event, type Screen } from "./sequence";
 import styles from "./Intro.module.css";
 
@@ -99,9 +99,11 @@ function renderLine(line: string): ReactNode {
 }
 
 export function Intro({
+  version,
   onDone,
   leaving,
 }: {
+  version: string;
   onDone: () => void;
   leaving: boolean;
 }): ReactElement {
@@ -110,7 +112,7 @@ export function Intro({
   const pendingRef = useRef<Event[]>([]);
 
   useEffect(() => {
-    pendingRef.current = schedule(INTRO_SCRIPT);
+    pendingRef.current = schedule(introScript(version));
     const start = performance.now();
     let frame = 0;
     let running = true;
@@ -173,7 +175,7 @@ export function Intro({
       window.removeEventListener("pointerdown", skip);
       window.removeEventListener("touchstart", skip);
     };
-  }, [onDone]);
+  }, [version, onDone]);
 
   const lines = screen.lines.map((line, index) => (
     <span key={index}>

@@ -38,12 +38,14 @@ function isTextField(target: EventTarget | null): boolean {
 }
 
 export function Shell({
+  version,
   tabs,
   phase,
   intro,
   player,
   children,
 }: {
+  version: string;
   tabs: TabInfo[];
   phase: Phase;
   intro: ReactNode;
@@ -193,7 +195,7 @@ export function Shell({
           <PlayerDock drawn={paint >= 3}>{player}</PlayerDock>
         </div>
       </div>
-      <Footer />
+      <Footer version={version} />
     </ShellContext.Provider>
   );
 }

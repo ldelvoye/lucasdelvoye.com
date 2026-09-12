@@ -1,8 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { EXPANSION_MS, INTRO_BUDGET_MS, INTRO_SCRIPT } from "../components/intro/script";
+import { EXPANSION_MS, INTRO_BUDGET_MS, introScript } from "../components/intro/script";
 import { EMPTY_SCREEN, apply, resolve, schedule } from "../components/intro/sequence";
 
 const STEADY = { charDelay: 45, jitter: () => 0 };
+const INTRO_SCRIPT = introScript("1.5.0");
 
 describe("schedule", () => {
   it("keeps events in script order even when jitter is negative", () => {

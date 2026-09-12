@@ -11,10 +11,12 @@ import { Window } from "./window/Window";
 export type Phase = "intro" | "expanding" | "full";
 
 export function Site({
+  version,
   tabs,
   player,
   children,
 }: {
+  version: string;
   tabs: TabInfo[];
   player: ReactNode;
   children: ReactNode;
@@ -57,7 +59,7 @@ export function Site({
   let intro: ReactNode = null;
   if (phase !== "full") {
     atmosphere = <Atmosphere dimmed={growing} />;
-    intro = <Intro onDone={finishIntro} leaving={growing} />;
+    intro = <Intro version={version} onDone={finishIntro} leaving={growing} />;
   }
 
   return (
@@ -69,8 +71,8 @@ export function Site({
         onGrowthStart={startGrowth}
         onGrown={finishGrowth}
       >
-        <Chrome />
-        <Shell tabs={tabs} phase={phase} intro={intro} player={player}>
+        <Chrome version={version} />
+        <Shell version={version} tabs={tabs} phase={phase} intro={intro} player={player}>
           {children}
         </Shell>
       </Window>

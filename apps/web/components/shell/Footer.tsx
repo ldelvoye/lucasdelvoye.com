@@ -1,13 +1,12 @@
 "use client";
 
 import type { ReactElement } from "react";
-import { SMORG_VERSION } from "@/components/intro/script";
 import { useShell } from "./ShellContext";
 import styles from "./Footer.module.css";
 
 type Hint = { key: string; label: string };
 
-export function Footer(): ReactElement {
+export function Footer({ version }: { version: string }): ReactElement {
   const shell = useShell();
   const hints: Hint[] = [];
   if (shell.tabCount > 1) {
@@ -34,7 +33,7 @@ export function Footer(): ReactElement {
         {items}
       </div>
       <span className={styles.credit}>
-        smorg {SMORG_VERSION} · ldelvoye/tap
+        smorg {version} · ldelvoye/tap
       </span>
     </div>
   );
