@@ -18,5 +18,10 @@ export const LINKS: Link[] = [
     value: "lucas-delvoye",
     href: "https://www.linkedin.com/in/lucas-delvoye/",
   },
-  { id: "email", label: "Email", value: "say hello", href: null },
+  {
+    id: "email",
+    label: "Email",
+    value: "delvoye02lucas@gmail.com",
+    href: "mailto:delvoye02lucas@gmail.com",
+  },
 ];

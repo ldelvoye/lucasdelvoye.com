@@ -10,6 +10,7 @@ import {
   type ReactNode,
 } from "react";
 import type { Phase } from "@/components/Site";
+import { isWebLink } from "@/components/ui/links";
 import { Footer } from "./Footer";
 import { Player } from "./Player";
 import { ShellContext, type ListRegistration, type ShellState } from "./ShellContext";
@@ -157,7 +158,11 @@ export function Shell({
         if (href === null) {
           return;
         }
-        window.open(href, "_blank", "noopener");
+        if (isWebLink(href)) {
+          window.open(href, "_blank", "noopener");
+        } else {
+          window.location.assign(href);
+        }
         return;
       }
       const back = registration.onBack;

@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState, type ReactElement, type ReactNode } from "react";
 import { Gutter } from "@/components/shell/Gutter";
+import { isWebLink } from "./links";
 import styles from "./Rows.module.css";
 
 export type Row = {
@@ -132,6 +133,12 @@ export function Rows({
         </button>
       );
     }
+    let target: string | undefined = undefined;
+    let rel: string | undefined = undefined;
+    if (isWebLink(row.href)) {
+      target = "_blank";
+      rel = "noopener noreferrer";
+    }
     return (
       <a
         key={row.id}
@@ -139,8 +146,8 @@ export function Rows({
         data-selected={isSelected}
         className={styles.row}
         href={row.href}
-        target="_blank"
-        rel="noopener noreferrer"
+        target={target}
+        rel={rel}
         onClick={() => onSelect(index)}
       >
         {inside}
