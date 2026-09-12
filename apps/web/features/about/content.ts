@@ -1,7 +1,5 @@
 export type Link = { id: string; label: string; value: string; href: string | null };
 
-export const HOST_USER = "lucas";
-export const HOST_NAME = "sf";
 
 export const FOCUS: string[] = ["infrastructure", "developer tooling"];
 

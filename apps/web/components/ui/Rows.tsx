@@ -21,15 +21,21 @@ export function Rows({
   selected,
   onSelect,
   columns,
+  anchor,
 }: {
   rows: Row[];
   selected: number;
   onSelect: (index: number) => void;
-  columns?: "list" | "ls";
+  columns?: "list" | "ls" | "table" | "log";
+  anchor?: "start" | "end";
 }): ReactElement {
-  let layout: "list" | "ls" = "list";
+  let layout: "list" | "ls" | "table" | "log" = "list";
   if (columns !== undefined) {
     layout = columns;
+  }
+  let anchored: "start" | "end" = "start";
+  if (anchor !== undefined) {
+    anchored = anchor;
   }
 
   const scrollRef = useRef<HTMLDivElement | null>(null);
@@ -72,12 +78,30 @@ export function Rows({
     syncGutter();
   }, [rows, selected, measure, syncGutter]);
 
+  const ids = rows.map((row) => row.id);
+  const contents = ids.join("\n");
+
+  useEffect(() => {
+    if (anchored !== "end") {
+      return;
+    }
+    const scroller = scrollRef.current;
+    if (scroller === null) {
+      return;
+    }
+    scroller.scrollTop = scroller.scrollHeight;
+    syncGutter();
+  }, [contents, anchored, syncGutter]);
+
   useEffect(() => {
     const scroller = scrollRef.current;
     if (scroller === null) {
       return;
     }
     const observer = new ResizeObserver(() => {
+      if (anchored === "end") {
+        scroller.scrollTop = scroller.scrollHeight;
+      }
       measure();
       syncGutter();
     });
@@ -85,7 +109,7 @@ export function Rows({
     return () => {
       observer.disconnect();
     };
-  }, [measure, syncGutter]);
+  }, [measure, syncGutter, anchored]);
 
   let washStyle: { transform: string; height: string } | undefined = undefined;
   let washShown = false;

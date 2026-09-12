@@ -1,28 +1,10 @@
 import type { ReactElement, ReactNode } from "react";
+import { Prompt } from "@/components/ui/Prompt";
 import { AboutLinks } from "./AboutLinks";
-import { BIO, FOCUS, HOST_NAME, HOST_USER } from "./content";
+import { BIO, FOCUS } from "./content";
 import styles from "./About.module.css";
 
 const TAB_ID = "about";
-
-function Prompt({ verb, arg }: { verb: string; arg?: string }): ReactElement {
-  let argument: ReactNode = null;
-  if (arg !== undefined) {
-    argument = <span className={styles.arg}>{arg}</span>;
-  }
-  return (
-    <p className={styles.cmd}>
-      <span className={styles.host}>
-        {HOST_USER}
-        <span className={styles.at}>@</span>
-        {HOST_NAME}
-      </span>
-      <span className={styles.sigil}>$</span>
-      <span className={styles.verb}>{verb}</span>
-      {argument}
-    </p>
-  );
-}
 
 export function AboutPanel(): ReactElement {
   const paragraphs = BIO.map((text) => <p key={text}>{text}</p>);
@@ -41,15 +23,15 @@ export function AboutPanel(): ReactElement {
 
   return (
     <div className={styles.session}>
-      <Prompt verb="whoami" />
+      <Prompt verb="whoami" className={styles.cmd} />
       <div className={styles.out}>
         <p className={styles.focus}>{focus}</p>
       </div>
       <span className={styles.rule} aria-hidden="true" />
-      <Prompt verb="cat" arg="bio" />
+      <Prompt verb="cat" arg="bio" className={styles.cmd} />
       <div className={`${styles.out} ${styles.prose}`}>{paragraphs}</div>
       <span className={styles.rule} aria-hidden="true" />
-      <Prompt verb="ls" arg="links" />
+      <Prompt verb="ls" arg="links" className={styles.cmd} />
       <div className={styles.out}>
         <AboutLinks tabId={TAB_ID} className={styles.links} />
       </div>

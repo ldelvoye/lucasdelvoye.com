@@ -16,40 +16,6 @@
   border-top: 1px solid var(--line-soft);
 }
 
-.cmd {
-  margin: 0;
-  white-space: nowrap;
-  font-size: 13px;
-  line-height: 1.5;
-}
-
-.host {
-  color: var(--ink-3);
-  font-size: 11px;
-  letter-spacing: 0.02em;
-}
-
-.at {
-  color: var(--pink);
-  font-weight: 700;
-}
-
-.sigil {
-  color: var(--ink-3);
-  padding: 0 7px 0 6px;
-}
-
-.verb {
-  color: var(--ink);
-  font-weight: 700;
-}
-
-.arg {
-  margin-left: 1ch;
-  color: var(--blue);
-  font-weight: 500;
-}
-
 .out {
   min-width: 0;
 }
