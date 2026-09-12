@@ -3,6 +3,9 @@ import { defineRailway, github, project, service } from "railway/iac";
 export default defineRailway(() => {
   const web = service("web", {
     source: github("ldelvoye/lucasdelvoye.com", { branch: "main" }),
+    build: {
+      watchPatterns: ["apps/web/**", "package.json", "package-lock.json", ".dockerignore"],
+    },
     healthcheck: "/",
     env: {
       RAILWAY_DOCKERFILE_PATH: "apps/web/Dockerfile",
