@@ -50,7 +50,7 @@ export function Box({
         {title}
         {countLabel}
       </h2>
-      {children}
+      <div className={styles.body}>{children}</div>
     </section>
   );
 }
