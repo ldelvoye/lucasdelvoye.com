@@ -1,5 +1,7 @@
 import type { ComponentType } from "react";
 import { AboutPanel } from "./about/AboutPanel";
+import { ProjectsFallback } from "./projects/ProjectsFallback";
+import { ProjectsPanel } from "./projects/ProjectsPanel";
 import { SpotifyFallback } from "./spotify/SpotifyFallback";
 import { SpotifyPanel } from "./spotify/SpotifyPanel";
 
@@ -7,5 +9,6 @@ export type TabEntry = { id: string; label: string; Panel: ComponentType; Fallba
 
 export const TABS: TabEntry[] = [
   { id: "about", label: "about", Panel: AboutPanel, Fallback: null },
+  { id: "projects", label: "projects", Panel: ProjectsPanel, Fallback: ProjectsFallback },
   { id: "spotify", label: "spotify", Panel: SpotifyPanel, Fallback: SpotifyFallback },
 ];

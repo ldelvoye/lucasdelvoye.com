@@ -1,0 +1,20 @@
+export type Clip = { src: string; width: number; height: number };
+export type ProjectEntry = { name: string; install: string; run: string; clip: Clip | null };
+
+export const OWNER = "ldelvoye";
+
+export const PROJECTS: ProjectEntry[] = [
+  { name: "smorg", install: "brew install ldelvoye/tap/smorg", run: "smorg", clip: null },
+  {
+    name: "taqueria",
+    install: "git clone https://github.com/ldelvoye/taqueria",
+    run: "taco",
+    clip: null,
+  },
+  {
+    name: "lucasdelvoye.com",
+    install: "git clone https://github.com/ldelvoye/lucasdelvoye.com",
+    run: "open https://lucasdelvoye.com",
+    clip: null,
+  },
+];

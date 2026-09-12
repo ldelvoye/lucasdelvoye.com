@@ -26,10 +26,10 @@ export function Rows({
   rows: Row[];
   selected: number;
   onSelect: (index: number) => void;
-  columns?: "list" | "ls" | "table" | "log";
+  columns?: "list" | "stack" | "ls" | "table" | "log";
   anchor?: "start" | "end";
 }): ReactElement {
-  let layout: "list" | "ls" | "table" | "log" = "list";
+  let layout: "list" | "stack" | "ls" | "table" | "log" = "list";
   if (columns !== undefined) {
     layout = columns;
   }
