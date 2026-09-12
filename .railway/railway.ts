@@ -15,6 +15,7 @@ export default defineRailway(() => {
       SPOTIFY_CLIENT_ID: preserve(),
       SPOTIFY_CLIENT_SECRET: preserve(),
       SPOTIFY_REFRESH_TOKEN: preserve(),
+      GITHUB_TOKEN: preserve(),
       SPOTIFY_HISTORY_BUCKET: ref(history, "BUCKET"),
       SPOTIFY_HISTORY_ENDPOINT: ref(history, "ENDPOINT"),
       SPOTIFY_HISTORY_REGION: ref(history, "REGION"),
