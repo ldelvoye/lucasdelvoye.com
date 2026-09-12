@@ -17,9 +17,6 @@ export function Atmosphere({ dimmed }: { dimmed: boolean }): ReactElement {
           Software engineer <span className={styles.dot}>·</span> San Francisco
         </span>
       </div>
-      <div className={styles.plate}>
-        <b>fig. 1</b> smorg, before it takes the screen
-      </div>
       <div className={`${styles.furniture} ${styles.bottom}`}>
         <span>
           ~/ <span className={styles.dot}>·</span> zsh <span className={styles.dot}>·</span> 80 × 24

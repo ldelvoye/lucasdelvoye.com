@@ -135,29 +135,6 @@
   color: var(--pink);
 }
 
-.plate {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translateX(-50%);
-  margin-top: calc(var(--win-h) / 2 + 26px);
-  padding: 5px 12px;
-  background: var(--paper);
-  border: 2px solid var(--ink);
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--ink-2);
-  white-space: nowrap;
-  transition: opacity var(--furniture-fade);
-}
-
-.plate b {
-  color: var(--blue);
-  font-weight: 700;
-}
-
 .page[data-dimmed="true"] .furniture {
   opacity: 0;
   transform: translateY(-6px);
@@ -165,10 +142,6 @@
 
 .page[data-dimmed="true"] .bottom {
   transform: translateY(6px);
-}
-
-.page[data-dimmed="true"] .plate {
-  opacity: 0;
 }
 
 @media (max-width: 48rem) {
@@ -196,11 +169,6 @@
 
   .crop::after {
     height: 14px;
-  }
-
-  .plate {
-    font-size: 9px;
-    padding: 4px 9px;
   }
 
   .tagline {
