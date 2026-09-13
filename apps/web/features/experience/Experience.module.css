@@ -1,0 +1,252 @@
+.grid {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(300px, 380px);
+  grid-template-rows: minmax(0, 1fr) auto;
+  grid-template-areas: "log show" "log timeline";
+  gap: clamp(18px, 2.4vw, 28px);
+  min-height: 440px;
+}
+
+.log {
+  grid-area: log;
+  min-height: 0;
+  container: log / size;
+}
+
+.show {
+  grid-area: show;
+  min-height: 0;
+  container: show / size;
+}
+
+.timelineBox {
+  grid-area: timeline;
+}
+
+.command {
+  flex: 0 0 auto;
+  padding-bottom: 18px;
+}
+
+.empty {
+  color: var(--ink-3);
+  font-size: 12px;
+}
+
+.graph {
+  position: absolute;
+  inset: 0;
+  display: block;
+}
+
+.svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.svg line,
+.svg path {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 2;
+  vector-effect: non-scaling-stroke;
+}
+
+.dot {
+  position: absolute;
+  top: 50%;
+  width: 10px;
+  height: 10px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  border: 2px solid var(--ink);
+  background: var(--blue-field);
+}
+
+.dotHead {
+  background: var(--pink);
+}
+
+.detail {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.headline {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.bullets {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.bullet {
+  display: flex;
+  gap: 8px;
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: var(--ink-2);
+}
+
+.bulletMark {
+  flex: 0 0 auto;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.4;
+  color: var(--pink);
+}
+
+.timelineBody {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.track {
+  position: relative;
+  height: 42px;
+  border-bottom: 1px solid var(--line-soft);
+}
+
+.topBand,
+.bottomBand {
+  position: absolute;
+  left: 0;
+  right: 0;
+}
+
+.topBand {
+  top: 0;
+  height: 18px;
+}
+
+.bottomBand {
+  top: 25px;
+  height: 6px;
+}
+
+.trunkBar {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  border: 2px solid var(--ink);
+  background: var(--seg-blue);
+}
+
+.internBar {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  background: var(--seg-violet);
+}
+
+.trunkBar[data-selected="true"],
+.internBar[data-selected="true"] {
+  background: var(--pink);
+}
+
+.years {
+  position: relative;
+  height: 17px;
+}
+
+.yearMark {
+  position: absolute;
+  top: 5px;
+  transform: translateX(-50%);
+  font-size: 10px;
+  line-height: 1;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+  white-space: nowrap;
+}
+
+.tick {
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 1px;
+  height: 6px;
+  background: var(--ink-3);
+}
+
+@container log (max-height: 600px) {
+  .command {
+    padding-bottom: 10px;
+  }
+}
+
+@container show (max-height: 440px) {
+  .command {
+    padding-bottom: 10px;
+  }
+
+  .detail {
+    gap: 8px;
+  }
+
+  .detail .kv {
+    gap: 6px 18px;
+  }
+
+  .headline {
+    font-size: 12.5px;
+  }
+
+  .bullets {
+    gap: 3px;
+  }
+
+  .bullet {
+    font-size: 12px;
+    line-height: 1.45;
+  }
+}
+
+@container show (max-height: 380px) {
+  .detail {
+    gap: 5px;
+  }
+
+  .detail .kv {
+    gap: 4px 18px;
+  }
+}
+
+@media (max-width: 48rem) {
+  .grid {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: none;
+    grid-template-areas: "log" "show" "timeline";
+    min-height: 0;
+  }
+
+  .log,
+  .show,
+  .timelineBox {
+    min-height: 0;
+  }
+
+  .log,
+  .show {
+    container-type: normal;
+  }
+}
