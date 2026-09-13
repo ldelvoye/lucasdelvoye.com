@@ -3,12 +3,15 @@
 import { useCallback, useEffect, useRef, useState, type ReactElement, type ReactNode } from "react";
 import { Gutter } from "@/components/shell/Gutter";
 import { isWebLink } from "./links";
+import { Tag } from "./Tag";
 import styles from "./Rows.module.css";
 
 export type Row = {
   id: string;
   glyph: string;
+  lead?: ReactNode;
   title: string;
+  tag?: { label: string; tone: "blue" | "pink" };
   subtitle: string | null;
   meta: string | null;
   href: string | null;
@@ -26,10 +29,10 @@ export function Rows({
   rows: Row[];
   selected: number;
   onSelect: (index: number) => void;
-  columns?: "list" | "stack" | "ls" | "table" | "log";
+  columns?: "list" | "stack" | "ls" | "table" | "log" | "graph";
   anchor?: "start" | "end";
 }): ReactElement {
-  let layout: "list" | "stack" | "ls" | "table" | "log" = "list";
+  let layout: "list" | "stack" | "ls" | "table" | "log" | "graph" = "list";
   if (columns !== undefined) {
     layout = columns;
   }
@@ -128,16 +131,35 @@ export function Rows({
     if (row.meta !== null) {
       meta = <span className={styles.meta}>{row.meta}</span>;
     }
+    let glyphCell: ReactNode = (
+      <span className={styles.glyph} aria-hidden="true">
+        {row.glyph}
+      </span>
+    );
+    if (row.lead !== undefined) {
+      glyphCell = (
+        <span className={styles.lead} aria-hidden="true">
+          {row.lead}
+        </span>
+      );
+    }
+    let titleContent: ReactNode = row.title;
+    if (row.tag !== undefined) {
+      titleContent = (
+        <>
+          {row.title}
+          <Tag label={row.tag.label} tone={row.tag.tone} />
+        </>
+      );
+    }
     const inside = (
       <>
         <span className={styles.cursor} aria-hidden="true">
           ▸
         </span>
-        <span className={styles.glyph} aria-hidden="true">
-          {row.glyph}
-        </span>
+        {glyphCell}
         <span className={styles.main}>
-          <span className={styles.title}>{row.title}</span>
+          <span className={styles.title}>{titleContent}</span>
           {subtitle}
         </span>
         {meta}

@@ -218,6 +218,39 @@
   font-size: 12px;
 }
 
+.rows[data-columns="graph"] .row {
+  grid-template-columns: 1.8ch 40px minmax(0, 1fr) auto;
+  align-items: center;
+  padding: 8px 9px 8px 5px;
+}
+
+.rows[data-columns="graph"] .title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.rows[data-columns="graph"] .lead {
+  position: relative;
+  align-self: stretch;
+  margin: -8px 0;
+}
+
+@container (max-height: 600px) {
+  .rows[data-columns="graph"] .row {
+    padding: 4px 9px 4px 5px;
+  }
+
+  .rows[data-columns="graph"] .subtitle {
+    line-height: 1.35;
+    margin-top: 1px;
+  }
+
+  .rows[data-columns="graph"] .lead {
+    margin: -4px 0;
+  }
+}
+
 .row:hover {
   background: var(--pink-hover);
 }
@@ -261,5 +294,20 @@ a.row:hover .title {
     padding-left: 4.2ch;
     margin-top: 5px;
     white-space: normal;
+  }
+
+  .rows[data-columns="graph"] .row {
+    grid-template-columns: 1.8ch 40px minmax(0, 1fr);
+  }
+
+  .rows[data-columns="graph"] .lead {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+  }
+
+  .rows[data-columns="graph"] .meta {
+    grid-column: 3;
+    padding-left: 0;
+    margin-top: 3px;
   }
 }
