@@ -25,6 +25,7 @@ type TopResponse = { items: ApiArtist[] };
 const TOKEN_MARGIN_MS = 60 * 1000;
 const RECENT_LIMIT = 50;
 const TOP_LIMIT = 5;
+const UPSTREAM_TIMEOUT_MS = 4000;
 
 type Token = { value: string; until: number };
 
@@ -35,10 +36,12 @@ async function refreshToken(): Promise<Token> {
   const env = spotifyEnv();
   const basic = Buffer.from(`${env.clientId}:${env.clientSecret}`).toString("base64");
   const body = new URLSearchParams({ grant_type: "refresh_token", refresh_token: env.refreshToken });
+  const signal = AbortSignal.timeout(UPSTREAM_TIMEOUT_MS);
   const response = await fetch(`${env.accountsOrigin}/api/token`, {
     method: "POST",
     headers: { Authorization: `Basic ${basic}`, "Content-Type": "application/x-www-form-urlencoded" },
     body,
+    signal,
   });
   if (!response.ok) {
     throw new Error(`token refresh failed: ${response.status}`);
@@ -68,8 +71,10 @@ async function accessToken(): Promise<string> {
 async function get<T>(path: string): Promise<{ status: number; json: T | null }> {
   const env = spotifyEnv();
   const bearer = await accessToken();
+  const signal = AbortSignal.timeout(UPSTREAM_TIMEOUT_MS);
   const response = await fetch(`${env.apiOrigin}${path}`, {
     headers: { Authorization: `Bearer ${bearer}` },
+    signal,
   });
   if (response.status === 204) {
     return { status: 204, json: null };

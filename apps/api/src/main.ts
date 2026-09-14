@@ -6,6 +6,7 @@ import { now, recent, topArtists, week } from "./spotify/loader.ts";
 import { start } from "./spotify/store.ts";
 
 const DEFAULT_PORT = 8788;
+const MAX_PORT = 65535;
 
 function port(): number {
   const raw = process.env.PORT;
@@ -18,6 +19,12 @@ function port(): number {
   const parsed = Number(raw);
   if (!Number.isInteger(parsed)) {
     throw new Error(`PORT is not a number: ${raw}`);
+  }
+  if (parsed < 1) {
+    throw new Error(`PORT is out of range: ${raw}`);
+  }
+  if (parsed > MAX_PORT) {
+    throw new Error(`PORT is out of range: ${raw}`);
   }
   return parsed;
 }

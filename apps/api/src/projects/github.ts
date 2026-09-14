@@ -25,6 +25,7 @@ const API_VERSION = "2022-11-28";
 const USER_AGENT = "lucasdelvoye.com";
 const SHA_LENGTH = 7;
 const COMMIT_COUNT = 5;
+const UPSTREAM_TIMEOUT_MS = 4000;
 
 async function get<T>(path: string): Promise<{ status: number; json: T | null }> {
   const env = githubEnv();
@@ -36,7 +37,8 @@ async function get<T>(path: string): Promise<{ status: number; json: T | null }>
   if (env.token !== null) {
     headers.Authorization = `Bearer ${env.token}`;
   }
-  const response = await fetch(`${env.apiOrigin}${path}`, { headers });
+  const signal = AbortSignal.timeout(UPSTREAM_TIMEOUT_MS);
+  const response = await fetch(`${env.apiOrigin}${path}`, { headers, signal });
   if (response.status === 404) {
     throw new NotFound(path);
   }
