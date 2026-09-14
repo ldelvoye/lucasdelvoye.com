@@ -1,8 +1,8 @@
-import { recentlyPlayed } from "./api";
-import { loadPlays, persistent, savePlays } from "./bucket";
-import { NotConfigured, spotifyEnv } from "./env";
-import { mergePlays } from "./history";
-import type { Play } from "./model";
+import { recentlyPlayed } from "./api.ts";
+import { loadPlays, persistent, savePlays } from "./bucket.ts";
+import { NotConfigured, spotifyEnv } from "./env.ts";
+import { mergePlays } from "./history.ts";
+import type { Play } from "contract";
 
 const POLL_MS = 5 * 60 * 1000;
 

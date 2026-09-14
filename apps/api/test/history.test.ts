@@ -1,13 +1,6 @@
 import { describe, expect, it } from "vitest";
-import {
-  formatDuration,
-  logTime,
-  mergePlays,
-  mixOf,
-  timelineOf,
-  weekOf,
-} from "../features/spotify/history";
-import type { Play } from "../features/spotify/model";
+import { mergePlays, mixOf, timelineOf, weekOf } from "../src/spotify/history.ts";
+import type { Play } from "contract";
 
 const NOW = Date.parse("2026-06-15T00:00:00.000Z");
 const HOUR = 60 * 60 * 1000;
@@ -104,19 +97,5 @@ describe("timelineOf", () => {
     expect(days[6]?.bins).toEqual([0, 0, 0, 0, 1, 0]);
     expect(days[5]?.bins).toEqual([0, 0, 1, 0, 0, 0]);
     expect(days[0]?.bins).toEqual([0, 0, 0, 0, 0, 0]);
-  });
-});
-
-describe("logTime", () => {
-  it("shows a Los Angeles clock for today and prefixes the weekday otherwise", () => {
-    expect(logTime(agoIso(1 * HOUR), NOW)).toBe("16:00");
-    expect(logTime(agoIso(30 * HOUR), NOW)).toBe("sat 11:00");
-  });
-});
-
-describe("formatDuration", () => {
-  it("formats hours and minutes together, or minutes alone under an hour", () => {
-    expect(formatDuration(552 * 60000)).toBe("9h 12m");
-    expect(formatDuration(48 * 60000)).toBe("48m");
   });
 });

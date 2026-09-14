@@ -1,5 +1,5 @@
-import { spotifyEnv } from "./env";
-import type { Play } from "./model";
+import { spotifyEnv } from "./env.ts";
+import type { Play } from "contract";
 
 export type ApiImage = { url: string; width: number; height: number };
 export type ApiArtist = { id: string; name: string; images?: ApiImage[] };
@@ -39,7 +39,6 @@ async function refreshToken(): Promise<Token> {
     method: "POST",
     headers: { Authorization: `Basic ${basic}`, "Content-Type": "application/x-www-form-urlencoded" },
     body,
-    cache: "no-store",
   });
   if (!response.ok) {
     throw new Error(`token refresh failed: ${response.status}`);
@@ -71,7 +70,6 @@ async function get<T>(path: string): Promise<{ status: number; json: T | null }>
   const bearer = await accessToken();
   const response = await fetch(`${env.apiOrigin}${path}`, {
     headers: { Authorization: `Bearer ${bearer}` },
-    cache: "no-store",
   });
   if (response.status === 204) {
     return { status: 204, json: null };

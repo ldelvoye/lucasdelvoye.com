@@ -1,6 +1,6 @@
 import { GetObjectCommand, PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
-import { bucketEnv } from "./env";
-import type { Play } from "./model";
+import { bucketEnv } from "./env.ts";
+import type { Play } from "contract";
 
 const KEY = "spotify/plays.json";
 
