@@ -1,17 +1,20 @@
 import { bucket, defineRailway, github, preserve, project, ref, service } from "railway/iac";
 
+const REPO = "ldelvoye/lucasdelvoye.com";
+const API_PORT = "8080";
+
 export default defineRailway(() => {
   const history = bucket("history", { region: "sjc" });
 
-  const web = service("web", {
-    source: github("ldelvoye/lucasdelvoye.com", { branch: "main" }),
+  const api = service("api", {
+    source: github(REPO, { branch: "main" }),
     build: {
-      watchPatterns: ["apps/web/**", "package.json", "package-lock.json", ".dockerignore"],
+      watchPatterns: ["apps/api/**", "packages/contract/**", "package.json", "package-lock.json", ".dockerignore"],
     },
-    healthcheck: "/",
+    healthcheck: "/health",
     env: {
-      RAILWAY_DOCKERFILE_PATH: "apps/web/Dockerfile",
-      NEXT_TELEMETRY_DISABLED: "1",
+      RAILWAY_DOCKERFILE_PATH: "apps/api/Dockerfile",
+      PORT: API_PORT,
       SPOTIFY_CLIENT_ID: preserve(),
       SPOTIFY_CLIENT_SECRET: preserve(),
       SPOTIFY_REFRESH_TOKEN: preserve(),
@@ -22,8 +25,21 @@ export default defineRailway(() => {
       SPOTIFY_HISTORY_ACCESS_KEY_ID: ref(history, "ACCESS_KEY_ID"),
       SPOTIFY_HISTORY_SECRET_ACCESS_KEY: ref(history, "SECRET_ACCESS_KEY"),
     },
+  });
+
+  const web = service("web", {
+    source: github(REPO, { branch: "main" }),
+    build: {
+      watchPatterns: ["apps/web/**", "packages/contract/**", "package.json", "package-lock.json", ".dockerignore"],
+    },
+    healthcheck: "/",
+    env: {
+      RAILWAY_DOCKERFILE_PATH: "apps/web/Dockerfile",
+      NEXT_TELEMETRY_DISABLED: "1",
+      API_ORIGIN: `http://\${{api.RAILWAY_PRIVATE_DOMAIN}}:${API_PORT}`,
+    },
     domains: ["lucasdelvoye.com", "www.lucasdelvoye.com"],
   });
 
-  return project("lucasdelvoye.com", { resources: [web, history] });
+  return project("lucasdelvoye.com", { resources: [api, web, history] });
 });
