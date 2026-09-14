@@ -2,7 +2,7 @@ import { connection } from "next/server";
 import type { ReactElement } from "react";
 import { Player } from "@/components/shell/Player";
 import { now } from "./loader";
-import type { NowPlaying } from "./model";
+import type { NowPlaying } from "contract";
 
 const DOCK_COVER = 64;
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import type { NowPlaying } from "@/features/spotify/model";
+import type { NowPlaying } from "contract";
 
 const TICK_MS = 1000;
 

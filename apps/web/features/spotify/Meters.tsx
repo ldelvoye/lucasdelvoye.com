@@ -1,6 +1,6 @@
 import { Fragment, type ReactElement } from "react";
-import { formatDuration } from "./history";
-import type { MixEntry, TimelineDay, Week } from "./model";
+import { formatDuration } from "./format";
+import type { MixEntry, TimelineDay, Week } from "contract";
 import styles from "./Spotify.module.css";
 
 function Timeline({ days }: { days: TimelineDay[] }): ReactElement {

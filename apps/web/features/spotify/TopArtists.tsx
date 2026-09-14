@@ -1,6 +1,6 @@
 import type { ReactElement } from "react";
 import { Cover } from "./Cover";
-import type { TopArtist } from "./model";
+import type { TopArtist } from "contract";
 import styles from "./Spotify.module.css";
 
 export function TopArtists({ artists }: { artists: TopArtist[] }): ReactElement {

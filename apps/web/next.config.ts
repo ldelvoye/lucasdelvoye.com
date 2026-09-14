@@ -3,6 +3,7 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   output: "standalone",
+  transpilePackages: ["contract"],
   outputFileTracingRoot: path.join(__dirname, "../../"),
   async redirects() {
     return [

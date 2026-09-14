@@ -3,7 +3,7 @@ import type { ReactElement, ReactNode } from "react";
 import { KeyValue, type Entry } from "@/components/ui/KeyValue";
 import { Prompt } from "@/components/ui/Prompt";
 import { Tag } from "@/components/ui/Tag";
-import type { Project } from "./model";
+import type { Project } from "contract";
 import { sparklineOf } from "./shape";
 import styles from "./Projects.module.css";
 

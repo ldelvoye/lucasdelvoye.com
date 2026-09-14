@@ -4,7 +4,7 @@ import type { ReactElement, ReactNode } from "react";
 import { Box } from "@/components/ui/Box";
 import { CharBar } from "@/components/ui/CharBar";
 import { Cover } from "@/features/spotify/Cover";
-import type { NowPlaying } from "@/features/spotify/model";
+import type { NowPlaying } from "contract";
 import { useNowRefresh } from "./useNowRefresh";
 import { useTicker } from "./useTicker";
 import styles from "./Player.module.css";

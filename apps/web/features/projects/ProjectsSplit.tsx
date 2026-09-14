@@ -6,7 +6,7 @@ import { Box } from "@/components/ui/Box";
 import { Prompt } from "@/components/ui/Prompt";
 import { Rows, type Row } from "@/components/ui/Rows";
 import { relativeTime } from "@/lib/time";
-import type { Project } from "./model";
+import type { Project } from "contract";
 import { ProjectDetail } from "./ProjectDetail";
 import { summaryOf } from "./shape";
 import styles from "./Projects.module.css";

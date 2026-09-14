@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-import type { NowPlaying } from "@/features/spotify/model";
+import type { NowPlaying } from "contract";
 
 const AFTER_END_MS = 1000;
 const ENDED_RETRY_MS = 4 * 1000;

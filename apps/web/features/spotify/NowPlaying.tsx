@@ -6,7 +6,7 @@ import { useTicker } from "@/components/shell/useTicker";
 import { CharBar } from "@/components/ui/CharBar";
 import { relativeTime } from "@/lib/time";
 import { Cover } from "./Cover";
-import type { NowPlaying } from "./model";
+import type { NowPlaying } from "contract";
 import styles from "./Spotify.module.css";
 
 const BAR_CELLS = 24;

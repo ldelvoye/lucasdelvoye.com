@@ -2,7 +2,7 @@
 
 import { useEffect, useState, type ReactElement } from "react";
 import { Prompt } from "@/components/ui/Prompt";
-import { clockTime } from "./history";
+import { clockTime } from "./format";
 import styles from "./Spotify.module.css";
 
 const TICK_MS = 1000;

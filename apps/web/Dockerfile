@@ -2,6 +2,8 @@ FROM node:26-alpine AS build
 WORKDIR /app
 COPY package.json package-lock.json ./
 COPY apps/web/package.json apps/web/package.json
+COPY apps/api/package.json apps/api/package.json
+COPY packages/contract/package.json packages/contract/package.json
 RUN npm ci
 COPY . .
 ENV NEXT_TELEMETRY_DISABLED=1

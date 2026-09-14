@@ -4,8 +4,8 @@ import { useCallback, useState, type ReactElement } from "react";
 import { useListKeys } from "@/components/shell/useListKeys";
 import { Prompt } from "@/components/ui/Prompt";
 import { Rows, type Row } from "@/components/ui/Rows";
-import { logTime } from "./history";
-import type { Play } from "./model";
+import { logTime } from "./format";
+import type { Play } from "contract";
 import styles from "./Spotify.module.css";
 
 export function RecentPlays({
