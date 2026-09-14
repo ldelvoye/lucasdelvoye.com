@@ -112,17 +112,11 @@
 }
 
 .badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+  flex: none;
   width: 30px;
   height: 30px;
   border: 2px solid var(--ink);
-  color: var(--ink);
-  font-weight: 700;
-  font-size: 11px;
-  letter-spacing: 0.06em;
-  background: var(--pink-block);
+  background: var(--mark);
 }
 
 .strong {
@@ -155,7 +149,6 @@
   .badge {
     width: 26px;
     height: 26px;
-    font-size: 10px;
   }
 
   .crop {

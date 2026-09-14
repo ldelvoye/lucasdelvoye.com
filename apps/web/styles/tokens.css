@@ -17,6 +17,8 @@
   --seg-violet: #a294ee;
   --seg-mint: #6ec7a6;
 
+  --mark: linear-gradient(135deg, var(--pink-block) 0 50%, var(--blue-block) 50% 100%);
+
   --mono: var(--font-mono), ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 
   --out: cubic-bezier(0.16, 1, 0.3, 1);

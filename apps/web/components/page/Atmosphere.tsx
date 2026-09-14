@@ -10,7 +10,7 @@ export function Atmosphere({ dimmed }: { dimmed: boolean }): ReactElement {
       <span className={`${styles.crop} ${styles.bl}`} />
       <span className={`${styles.crop} ${styles.br}`} />
       <div className={`${styles.furniture} ${styles.top}`}>
-        <span className={styles.badge}>LD</span>
+        <span className={styles.badge} />
         <strong className={styles.strong}>lucasdelvoye.com</strong>
         <span className={styles.rule} />
         <span className={styles.tagline}>

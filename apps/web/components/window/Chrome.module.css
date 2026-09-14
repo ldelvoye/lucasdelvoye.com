@@ -91,7 +91,7 @@
   height: 16px;
   flex: none;
   border: 2px solid var(--ink);
-  background: linear-gradient(135deg, var(--pink-block) 0 50%, var(--blue-block) 50% 100%);
+  background: var(--mark);
 }
 
 .powered {
