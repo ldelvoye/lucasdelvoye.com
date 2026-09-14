@@ -1,4 +1,5 @@
-export type Clip = { src: string; width: number; height: number };
+import type { Clip } from "contract";
+
 export type ProjectEntry = { name: string; install: string; run: string; clip: Clip | null };
 
 export const OWNER = "ldelvoye";

@@ -1,6 +1,6 @@
-import { OWNER } from "./content";
-import { githubEnv } from "./env";
-import type { Commit } from "./model";
+import { OWNER } from "./content.ts";
+import { githubEnv } from "./env.ts";
+import type { Commit } from "contract";
 
 export class NotFound extends Error {}
 
@@ -36,7 +36,7 @@ async function get<T>(path: string): Promise<{ status: number; json: T | null }>
   if (env.token !== null) {
     headers.Authorization = `Bearer ${env.token}`;
   }
-  const response = await fetch(`${env.apiOrigin}${path}`, { headers, cache: "no-store" });
+  const response = await fetch(`${env.apiOrigin}${path}`, { headers });
   if (response.status === 404) {
     throw new NotFound(path);
   }
