@@ -68,7 +68,7 @@ describe("projects loader", () => {
 
   it("keeps the curated order and drops a repository GitHub does not have", async () => {
     process.env.GITHUB_API_ORIGIN = "http://stub";
-    stubGithub("taqueria");
+    stubGithub("taco-shells");
     const loaded = await projects();
     expect(loaded.map((project) => project.name)).toEqual(["smorg", "lucasdelvoye.com"]);
     expect(loaded[0]?.release).toBeNull();

@@ -7,8 +7,8 @@ export const OWNER = "ldelvoye";
 export const PROJECTS: ProjectEntry[] = [
   { name: "smorg", install: "brew install ldelvoye/tap/smorg", run: "smorg", clip: null },
   {
-    name: "taqueria",
-    install: "git clone https://github.com/ldelvoye/taqueria",
+    name: "taco-shells",
+    install: "git clone https://github.com/ldelvoye/taco-shells",
     run: "taco",
     clip: null,
   },
