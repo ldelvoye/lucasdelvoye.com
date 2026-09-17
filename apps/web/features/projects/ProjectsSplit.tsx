@@ -1,9 +1,10 @@
 "use client";
 
 import { useCallback, useState, type ReactElement } from "react";
+import { Session } from "@/components/reveal/Session";
+import { staggeredDelay } from "@/components/reveal/schedule";
 import { useListKeys } from "@/components/shell/useListKeys";
 import { Box } from "@/components/ui/Box";
-import { Prompt } from "@/components/ui/Prompt";
 import { Rows, type Row } from "@/components/ui/Rows";
 import { relativeTime } from "@/lib/time";
 import type { Project } from "contract";
@@ -81,8 +82,16 @@ export function ProjectsSplit({
   return (
     <div className={styles.grid}>
       <Box title="projects" count={projects.length} className={styles.list}>
-        <Prompt verb="ls" arg="~/code" className={styles.command} />
-        <Rows rows={rows} selected={selected} onSelect={onMove} columns="stack" />
+        <Session
+          order={0}
+          delay={staggeredDelay(0)}
+          verb="ls"
+          arg="~/code"
+          reveal="rows"
+          className={styles.command}
+        >
+          <Rows rows={rows} selected={selected} onSelect={onMove} columns="stack" />
+        </Session>
         <p className={styles.foot}>{summaryOf(projects, at)}</p>
       </Box>
       {detail}

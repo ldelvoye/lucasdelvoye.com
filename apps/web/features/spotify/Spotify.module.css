@@ -41,6 +41,10 @@
   padding-bottom: 18px;
 }
 
+.side .command {
+  padding-bottom: 8px;
+}
+
 .tail {
   margin: 0;
   padding: 4px 9px 2px 5px;
@@ -348,7 +352,7 @@
   }
 }
 
-@container side (max-height: 500px) {
+@container side (max-height: 515px) {
   .timeline {
     padding-top: 8px;
   }
@@ -363,7 +367,7 @@
   }
 }
 
-@container side (max-height: 470px) {
+@container side (max-height: 495px) {
   .timeline {
     display: none;
   }

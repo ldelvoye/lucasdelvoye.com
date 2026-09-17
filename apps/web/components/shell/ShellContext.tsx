@@ -10,12 +10,16 @@ export type ListRegistration = {
   onBack: (() => void) | null;
 };
 
+export type Replay = { tabId: string; startedAt: number };
+
 export type ShellState = {
   activeId: string;
   tabCount: number;
   registration: ListRegistration | null;
   register: (tabId: string, registration: ListRegistration) => void;
   unregister: (tabId: string) => void;
+  replay: Replay | null;
+  finishReplay: (tabId: string) => void;
 };
 
 function ignore() {
@@ -28,6 +32,8 @@ const IDLE: ShellState = {
   registration: null,
   register: ignore,
   unregister: ignore,
+  replay: null,
+  finishReplay: ignore,
 };
 
 export const ShellContext = createContext<ShellState>(IDLE);

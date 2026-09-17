@@ -1,8 +1,10 @@
 "use client";
 
-import { Component, type ReactElement, type ReactNode } from "react";
+import { Component, useCallback, type ReactElement, type ReactNode } from "react";
+import { RevealProvider } from "@/components/reveal/RevealContext";
 import { Box } from "@/components/ui/Box";
 import styles from "./Pane.module.css";
+import { useShell } from "./ShellContext";
 
 type BoundaryProps = { label: string; children: ReactNode };
 type BoundaryState = { failed: boolean };
@@ -35,6 +37,19 @@ export function Pane({
   label: string;
   children: ReactNode;
 }): ReactElement {
+  const { replay, finishReplay } = useShell();
+
+  let playing = false;
+  let startedAt = 0;
+  if (replay !== null && replay.tabId === id) {
+    playing = true;
+    startedAt = replay.startedAt;
+  }
+
+  const onDone = useCallback(() => {
+    finishReplay(id);
+  }, [finishReplay, id]);
+
   return (
     <section
       className={styles.pane}
@@ -42,7 +57,9 @@ export function Pane({
       id={`panel-${id}`}
       aria-labelledby={`tab-${id}`}
     >
-      <PanelBoundary label={label}>{children}</PanelBoundary>
+      <RevealProvider playing={playing} startedAt={startedAt} onDone={onDone}>
+        <PanelBoundary label={label}>{children}</PanelBoundary>
+      </RevealProvider>
     </section>
   );
 }

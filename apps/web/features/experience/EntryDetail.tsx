@@ -1,6 +1,7 @@
 import type { ReactElement } from "react";
+import { Session } from "@/components/reveal/Session";
+import { staggeredDelay } from "@/components/reveal/schedule";
 import { KeyValue, type Entry as KeyValueEntry } from "@/components/ui/KeyValue";
-import { Prompt } from "@/components/ui/Prompt";
 import type { Entry } from "./content";
 import { spanLabel } from "./shape";
 import styles from "./Experience.module.css";
@@ -23,10 +24,20 @@ export function EntryDetail({ entry }: { entry: Entry }): ReactElement {
 
   return (
     <div className={styles.detail}>
-      <Prompt verb="git" arg={`show ${entry.ref}`} className={styles.command} />
-      <KeyValue entries={entries} className={styles.kv} />
-      <p className={styles.headline}>{entry.headline}</p>
-      <ul className={styles.bullets}>{bullets}</ul>
+      <Session
+        order={1}
+        delay={staggeredDelay(1)}
+        verb="git"
+        arg={`show ${entry.ref}`}
+        reveal="fade"
+        className={styles.command}
+      >
+        <>
+          <KeyValue entries={entries} className={styles.kv} />
+          <p className={styles.headline}>{entry.headline}</p>
+          <ul className={styles.bullets}>{bullets}</ul>
+        </>
+      </Session>
     </div>
   );
 }

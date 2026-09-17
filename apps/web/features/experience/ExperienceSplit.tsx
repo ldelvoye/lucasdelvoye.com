@@ -1,9 +1,10 @@
 "use client";
 
 import { useCallback, useState, type ReactElement } from "react";
+import { Session } from "@/components/reveal/Session";
+import { staggeredDelay } from "@/components/reveal/schedule";
 import { useListKeys } from "@/components/shell/useListKeys";
 import { Box } from "@/components/ui/Box";
-import { Prompt } from "@/components/ui/Prompt";
 import { Rows, type Row } from "@/components/ui/Rows";
 import type { Entry } from "./content";
 import { EntryDetail } from "./EntryDetail";
@@ -99,12 +100,29 @@ export function ExperienceSplit({
   return (
     <div className={styles.grid}>
       <Box title="experience" count={entries.length} className={styles.log}>
-        <Prompt verb="git" arg="log --graph --date=short" className={styles.command} />
-        <Rows rows={rows} selected={selected} onSelect={onMove} columns="graph" />
+        <Session
+          order={0}
+          delay={staggeredDelay(0)}
+          verb="git"
+          arg="log --graph --date=short"
+          reveal="rows"
+          className={styles.command}
+        >
+          <Rows rows={rows} selected={selected} onSelect={onMove} columns="graph" />
+        </Session>
       </Box>
       {detail}
       <Box title="timeline" className={styles.timelineBox}>
-        <Timeline entries={entries} axis={axis} now={now} selectedRef={selectedRef} />
+        <Session
+          order={2}
+          delay={staggeredDelay(2)}
+          verb="git"
+          arg="for-each-ref --sort=creatordate"
+          reveal="fade"
+          className={styles.command}
+        >
+          <Timeline entries={entries} axis={axis} now={now} selectedRef={selectedRef} />
+        </Session>
       </Box>
     </div>
   );

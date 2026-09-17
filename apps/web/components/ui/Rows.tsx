@@ -1,6 +1,14 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState, type ReactElement, type ReactNode } from "react";
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+  type ReactElement,
+  type ReactNode,
+} from "react";
 import { Gutter } from "@/components/shell/Gutter";
 import { isWebLink } from "./links";
 import { Tag } from "./Tag";
@@ -171,8 +179,10 @@ export function Rows({
           key={row.id}
           type="button"
           data-row
+          data-line
           data-selected={isSelected}
           className={styles.row}
+          style={{ "--i": index } as CSSProperties}
           onClick={() => onSelect(index)}
         >
           {inside}
@@ -189,8 +199,10 @@ export function Rows({
       <a
         key={row.id}
         data-row
+        data-line
         data-selected={isSelected}
         className={styles.row}
+        style={{ "--i": index } as CSSProperties}
         href={row.href}
         target={target}
         rel={rel}

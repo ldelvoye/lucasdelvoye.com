@@ -9,11 +9,13 @@ import {
   type ReactElement,
   type ReactNode,
 } from "react";
+import { useReducedMotion } from "motion/react";
 import type { Phase } from "@/components/Site";
+import { nextPlayed } from "@/components/reveal/schedule";
 import { isWebLink } from "@/components/ui/links";
 import { Footer } from "./Footer";
 import { PlayerDock } from "./Player";
-import { ShellContext, type ListRegistration, type ShellState } from "./ShellContext";
+import { ShellContext, type ListRegistration, type Replay, type ShellState } from "./ShellContext";
 import { Stage } from "./Stage";
 import { TabStrip } from "./TabStrip";
 import { route, type KeyContext, type Registered } from "./keymap";
@@ -56,6 +58,9 @@ export function Shell({
   const [activeId, setActiveId] = useState(first.id);
   const [registrations, setRegistrations] = useState<Record<string, ListRegistration>>({});
   const [paint, setPaint] = useState(0);
+  const [replay, setReplay] = useState<Replay | null>(null);
+  const playedRef = useRef<string[]>([]);
+  const reduced = useReducedMotion();
   const paintStarted = useRef(false);
   const paintTimers = useRef<number[]>([]);
 
@@ -71,6 +76,32 @@ export function Shell({
     });
   }, []);
 
+  const selectTab = useCallback((tabId: string) => {
+    setActiveId(tabId);
+    if (reduced === true) {
+      return;
+    }
+    const already = playedRef.current;
+    const marked = nextPlayed(already, tabId);
+    if (marked === already) {
+      return;
+    }
+    playedRef.current = marked;
+    setReplay({ tabId, startedAt: performance.now() });
+  }, [reduced]);
+
+  const finishReplay = useCallback((tabId: string) => {
+    setReplay((current) => {
+      if (current === null) {
+        return null;
+      }
+      if (current.tabId !== tabId) {
+        return current;
+      }
+      return null;
+    });
+  }, []);
+
   let registration: ListRegistration | null = null;
   const found = registrations[activeId];
   if (found !== undefined) {
@@ -78,8 +109,8 @@ export function Shell({
   }
 
   const value: ShellState = useMemo(() => {
-    return { activeId, tabCount: tabs.length, registration, register, unregister };
-  }, [activeId, tabs.length, registration, register, unregister]);
+    return { activeId, tabCount: tabs.length, registration, register, unregister, replay, finishReplay };
+  }, [activeId, tabs.length, registration, register, unregister, replay, finishReplay]);
 
   useEffect(() => {
     if (phase === "intro") {
@@ -100,10 +131,13 @@ export function Shell({
     for (const entry of schedule) {
       const timer = window.setTimeout(() => {
         setPaint(entry.step);
+        if (entry.step >= 2) {
+          selectTab(first.id);
+        }
       }, entry.at);
       paintTimers.current.push(timer);
     }
-  }, [phase]);
+  }, [phase, selectTab, first.id]);
 
   useEffect(() => {
     const timers = paintTimers.current;
@@ -146,7 +180,7 @@ export function Shell({
       if (action.type === "tab") {
         const next = tabs[action.index];
         if (next !== undefined) {
-          setActiveId(next.id);
+          selectTab(next.id);
         }
         return;
       }
@@ -179,14 +213,30 @@ export function Shell({
     return () => {
       window.removeEventListener("keydown", onKeyDown);
     };
-  }, [phase, tabs, activeId, registration]);
+  }, [phase, tabs, activeId, registration, selectTab]);
+
+  useEffect(() => {
+    if (replay === null) {
+      return;
+    }
+    const tabId = replay.tabId;
+    function skip() {
+      finishReplay(tabId);
+    }
+    window.addEventListener("keydown", skip);
+    window.addEventListener("pointerdown", skip);
+    return () => {
+      window.removeEventListener("keydown", skip);
+      window.removeEventListener("pointerdown", skip);
+    };
+  }, [replay, finishReplay]);
 
   return (
     <ShellContext.Provider value={value}>
       <div data-body>
         {intro}
         <div data-dash>
-          <TabStrip tabs={tabs} activeId={activeId} onSelect={setActiveId} drawn={paint >= 1} />
+          <TabStrip tabs={tabs} activeId={activeId} onSelect={selectTab} drawn={paint >= 1} />
           <div data-viewport data-region="pane" data-drawn={paint >= 2}>
             <Stage tabs={tabs} activeId={activeId}>
               {children}

@@ -1,8 +1,9 @@
 "use client";
 
 import { useCallback, useState, type ReactElement } from "react";
+import { Session } from "@/components/reveal/Session";
+import { staggeredDelay } from "@/components/reveal/schedule";
 import { useListKeys } from "@/components/shell/useListKeys";
-import { Prompt } from "@/components/ui/Prompt";
 import { Rows, type Row } from "@/components/ui/Rows";
 import { logTime } from "./format";
 import type { Play } from "contract";
@@ -46,8 +47,16 @@ export function RecentPlays({
 
   return (
     <div className={styles.plays}>
-      <Prompt verb="tail" arg="-f ~/.spotify/history" className={styles.command} />
-      <Rows rows={rows} selected={selected} onSelect={onMove} columns="log" anchor="end" />
+      <Session
+        order={1}
+        delay={staggeredDelay(1)}
+        verb="tail"
+        arg="-f ~/.spotify/history"
+        reveal="rows"
+        className={styles.command}
+      >
+        <Rows rows={rows} selected={selected} onSelect={onMove} columns="log" anchor="end" />
+      </Session>
       <p className={styles.tail} aria-hidden="true">
         <span className={styles.caret} />
       </p>

@@ -49,6 +49,37 @@ a {
   display: none;
 }
 
+[data-session] {
+  display: contents;
+}
+
+[data-session="wait"] {
+  visibility: hidden;
+}
+
+[data-session="fade"] > *,
+[data-session="print"] > * {
+  animation: session-fade 220ms ease-out both;
+}
+
+[data-session="print"] [data-line] {
+  animation: session-print 180ms ease-out both;
+  animation-delay: calc(var(--i, 0) * 35ms);
+}
+
+@keyframes session-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes session-print {
+  from {
+    opacity: 0;
+    transform: translateY(-2px);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html *,
   html *::before,

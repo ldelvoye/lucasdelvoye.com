@@ -6,16 +6,22 @@ export function Prompt({
   verb,
   arg,
   trailing,
+  caret,
   className,
 }: {
   verb: string;
   arg?: string;
   trailing?: ReactNode;
+  caret?: boolean;
   className?: string;
 }): ReactElement {
   let argument: ReactNode = null;
   if (arg !== undefined) {
     argument = <span className={styles.arg}>{arg}</span>;
+  }
+  let cursor: ReactNode = null;
+  if (caret === true) {
+    cursor = <span className={styles.caret} aria-hidden="true" />;
   }
   let tail: ReactNode = null;
   if (trailing !== undefined) {
@@ -35,6 +41,7 @@ export function Prompt({
       <span className={styles.sigil}>$</span>
       <span className={styles.verb}>{verb}</span>
       {argument}
+      {cursor}
       {tail}
     </p>
   );

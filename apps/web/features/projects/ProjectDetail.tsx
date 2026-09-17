@@ -1,7 +1,8 @@
 import Image from "next/image";
-import type { ReactElement, ReactNode } from "react";
+import type { CSSProperties, ReactElement, ReactNode } from "react";
+import { Session } from "@/components/reveal/Session";
+import { staggeredDelay } from "@/components/reveal/schedule";
 import { KeyValue, type Entry } from "@/components/ui/KeyValue";
-import { Prompt } from "@/components/ui/Prompt";
 import { Tag } from "@/components/ui/Tag";
 import type { Project } from "contract";
 import { sparklineOf } from "./shape";
@@ -102,8 +103,13 @@ export function ProjectDetail({ project }: { project: Project }): ReactElement {
   const install = splitCommand(project.install);
   const run = splitCommand(project.run);
 
-  const commits = project.commits.map((commit) => (
-    <span key={commit.sha} className={styles.commit}>
+  const commits = project.commits.map((commit, index) => (
+    <span
+      key={commit.sha}
+      className={styles.commit}
+      data-line
+      style={{ "--i": index } as CSSProperties}
+    >
       <span className={styles.sha}>{commit.sha}</span>
       <span className={styles.subject}>{commit.subject}</span>
     </span>
@@ -112,34 +118,78 @@ export function ProjectDetail({ project }: { project: Project }): ReactElement {
   return (
     <div className={styles.body}>
       <div className={styles.column}>
-        <Prompt verb="gh" arg={`repo view ${project.name}`} className={styles.command} />
-        <p className={styles.sentence}>{project.description}</p>
-        <Languages project={project} />
-        <span className={styles.caption}>repository</span>
-        <KeyValue entries={entries} wide className={styles.kv} />
-        <Topics topics={project.topics} />
+        <Session
+          order={1}
+          delay={staggeredDelay(1)}
+          verb="gh"
+          arg={`repo view ${project.name}`}
+          reveal="fade"
+          className={styles.command}
+        >
+          <>
+            <p className={styles.sentence}>{project.description}</p>
+            <Languages project={project} />
+            <span className={styles.caption}>repository</span>
+            <KeyValue entries={entries} wide className={styles.kv} />
+            <Topics topics={project.topics} />
+          </>
+        </Session>
         <div className={styles.install}>
-          <Prompt verb={install.verb} arg={install.arg} />
+          <Session
+            order={2}
+            delay={staggeredDelay(2)}
+            verb={install.verb}
+            arg={install.arg}
+            reveal="none"
+            caret={false}
+          />
           <span className={styles.caret} />
         </div>
       </div>
       <div className={styles.column}>
-        <Prompt verb={run.verb} arg={run.arg} className={styles.command} />
-        {clip}
+        <Session
+          order={3}
+          delay={staggeredDelay(3)}
+          verb={run.verb}
+          arg={run.arg}
+          reveal="fade"
+          className={styles.command}
+        >
+          {clip}
+        </Session>
       </div>
       <span className={styles.rule} aria-hidden="true" />
       <div className={styles.column}>
-        <Prompt verb="git" arg="log --oneline -5" className={styles.command} />
-        <div className={styles.log}>{commits}</div>
+        <Session
+          order={4}
+          delay={staggeredDelay(4)}
+          verb="git"
+          arg="log --oneline -5"
+          reveal="rows"
+          className={styles.command}
+        >
+          <div className={styles.log}>{commits}</div>
+        </Session>
       </div>
       <div className={styles.column}>
-        <div className={styles.sparkhead}>
-          <span className={styles.caption}>commits · 52 weeks</span>
-          <a className={styles.button} href={project.url} target="_blank" rel="noopener noreferrer">
-            <span className={styles.kcap}>o</span> open on github
-          </a>
-        </div>
-        <Sparkline weeks={project.weeks} />
+        <Session
+          order={5}
+          delay={staggeredDelay(5)}
+          verb="git"
+          arg="log --since=52.weeks"
+          reveal="fade"
+          className={styles.command}
+        >
+          <>
+            <div className={styles.sparkhead}>
+              <span className={styles.caption}>commits · 52 weeks</span>
+              <a className={styles.button} href={project.url} target="_blank" rel="noopener noreferrer">
+                <span className={styles.kcap}>o</span> open on github
+              </a>
+            </div>
+            <Sparkline weeks={project.weeks} />
+          </>
+        </Session>
       </div>
     </div>
   );

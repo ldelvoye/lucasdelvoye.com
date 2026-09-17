@@ -1,4 +1,4 @@
-import { Fragment, type ReactElement } from "react";
+import { Fragment, type CSSProperties, type ReactElement } from "react";
 import { formatDuration } from "./format";
 import type { MixEntry, TimelineDay, Week } from "contract";
 import styles from "./Spotify.module.css";
@@ -44,22 +44,26 @@ export function Meters({
     return <p className={styles.note}>no plays yet</p>;
   }
 
-  const meters = mix.map((entry) => {
+  const meters = mix.map((entry, index) => {
     const width = `${entry.percent}%`;
+    const line = { "--i": index } as CSSProperties;
     return (
       <Fragment key={entry.artistId}>
-        <span className={styles.mlabel}>{entry.name}</span>
-        <span className={styles.meter}>
+        <span className={styles.mlabel} data-line style={line}>
+          {entry.name}
+        </span>
+        <span className={styles.meter} data-line style={line}>
           <i style={{ width }} />
         </span>
-        <span className={styles.mval}>{entry.percent}%</span>
+        <span className={styles.mval} data-line style={line}>
+          {entry.percent}%
+        </span>
       </Fragment>
     );
   });
 
   return (
     <div className={styles.mix}>
-      <span className={styles.caption}>artist mix · this week</span>
       <div className={styles.meters}>{meters}</div>
       <Timeline days={timeline} />
       <p className={styles.note}>
