@@ -1,5 +1,6 @@
 import path from "node:path";
 import type { NextConfig } from "next";
+import { withSentryConfig } from "@sentry/nextjs/config";
 
 const nextConfig: NextConfig = {
   output: "standalone",
@@ -17,4 +18,11 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+export default withSentryConfig(nextConfig, {
+  org: "ldelvoye",
+  project: "lucasdelvoye-com",
+  authToken: process.env.SENTRY_AUTH_TOKEN,
+  release: { name: process.env.RAILWAY_GIT_COMMIT_SHA },
+  widenClientFileUpload: true,
+  sourcemaps: { deleteSourcemapsAfterUpload: true },
+});
