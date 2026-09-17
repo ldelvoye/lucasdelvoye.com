@@ -64,10 +64,10 @@ function isMissing(error: unknown): boolean {
   return named.name === "NoSuchKey";
 }
 
-export async function savePlays(plays: Play[]): Promise<void> {
+export async function savePlays(plays: Play[]): Promise<boolean> {
   const connected = connect();
   if (connected === null) {
-    return;
+    return false;
   }
   const body = JSON.stringify(plays);
   const command = new PutObjectCommand({
@@ -77,4 +77,5 @@ export async function savePlays(plays: Play[]): Promise<void> {
     ContentType: "application/json",
   });
   await connected.s3.send(command);
+  return true;
 }

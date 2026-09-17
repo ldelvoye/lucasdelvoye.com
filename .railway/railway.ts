@@ -2,6 +2,7 @@ import { bucket, defineRailway, github, preserve, project, ref, service } from "
 
 const REPO = "ldelvoye/lucasdelvoye.com";
 const API_PORT = "8080";
+const SENTRY_DSN = "https://be3c796b9e2543e8cfe65b0af7b19cfd@o4512082698960896.ingest.us.sentry.io/4512099568844800";
 
 export default defineRailway(() => {
   const history = bucket("history", { region: "sjc" });
@@ -19,6 +20,7 @@ export default defineRailway(() => {
       SPOTIFY_CLIENT_SECRET: preserve(),
       SPOTIFY_REFRESH_TOKEN: preserve(),
       GITHUB_TOKEN: preserve(),
+      SENTRY_DSN: SENTRY_DSN,
       SPOTIFY_HISTORY_BUCKET: ref(history, "BUCKET"),
       SPOTIFY_HISTORY_ENDPOINT: ref(history, "ENDPOINT"),
       SPOTIFY_HISTORY_REGION: ref(history, "REGION"),

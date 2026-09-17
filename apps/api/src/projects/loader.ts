@@ -1,6 +1,16 @@
 import { memo } from "../memo.ts";
+import { info, warn, type Attributes } from "../log.ts";
 import { PROJECTS, type ProjectEntry } from "./content.ts";
-import { NotFound, languages, latestRelease, participation, recentCommits, repo, type ApiRepo } from "./github.ts";
+import {
+  NotFound,
+  languages,
+  lastRateLimitRemaining,
+  latestRelease,
+  participation,
+  recentCommits,
+  repo,
+  type ApiRepo,
+} from "./github.ts";
 import type { Project } from "contract";
 import { languagesOf } from "./shape.ts";
 
@@ -12,7 +22,7 @@ async function loadProject(entry: ProjectEntry): Promise<Project | null> {
     repository = await repo(entry.name);
   } catch (error) {
     if (error instanceof NotFound) {
-      console.warn(`project ${entry.name} is not on github, skipping it`);
+      warn("project not on github, skipping it", { project: entry.name });
       return null;
     }
     throw error;
@@ -54,6 +64,7 @@ async function loadProject(entry: ProjectEntry): Promise<Project | null> {
 }
 
 async function loadAll(): Promise<Project[]> {
+  const startedAt = Date.now();
   const loaded = await Promise.all(PROJECTS.map(loadProject));
   const present: Project[] = [];
   for (const project of loaded) {
@@ -61,6 +72,13 @@ async function loadAll(): Promise<Project[]> {
       present.push(project);
     }
   }
+  const durationMs = Date.now() - startedAt;
+  const attributes: Attributes = { projects: present.length, duration_ms: durationMs };
+  const remaining = lastRateLimitRemaining();
+  if (remaining !== null) {
+    attributes.github_remaining = remaining;
+  }
+  info("projects refreshed", attributes);
   return present;
 }
 
@@ -72,11 +90,11 @@ export async function projects(): Promise<Project[]> {
   try {
     last = await all.get();
     return last;
-  } catch (error) {
+  } catch (cause) {
     if (last === null) {
-      throw error;
+      throw cause;
     }
-    console.warn("projects refresh failed, serving the previous list", error);
+    warn("projects refresh failed, serving the previous list", {}, cause);
     return last;
   }
 }

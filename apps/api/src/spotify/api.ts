@@ -1,4 +1,6 @@
+import * as Sentry from "@sentry/hono/node";
 import { spotifyEnv } from "./env.ts";
+import { info } from "../log.ts";
 import type { Play } from "contract";
 
 export type ApiImage = { url: string; width: number; height: number };
@@ -29,6 +31,16 @@ const UPSTREAM_TIMEOUT_MS = 4000;
 
 type Token = { value: string; until: number };
 
+const UPSTREAM_METRIC = "spotify.upstream.duration";
+
+function observe(path: string, status: number, startedAt: number): void {
+  const elapsed = Date.now() - startedAt;
+  Sentry.metrics.distribution(UPSTREAM_METRIC, elapsed, {
+    unit: "millisecond",
+    attributes: { path, status },
+  });
+}
+
 let token: Token | null = null;
 let refreshing: Promise<Token> | null = null;
 
@@ -37,16 +49,19 @@ async function refreshToken(): Promise<Token> {
   const basic = Buffer.from(`${env.clientId}:${env.clientSecret}`).toString("base64");
   const body = new URLSearchParams({ grant_type: "refresh_token", refresh_token: env.refreshToken });
   const signal = AbortSignal.timeout(UPSTREAM_TIMEOUT_MS);
+  const startedAt = Date.now();
   const response = await fetch(`${env.accountsOrigin}/api/token`, {
     method: "POST",
     headers: { Authorization: `Basic ${basic}`, "Content-Type": "application/x-www-form-urlencoded" },
     body,
     signal,
   });
+  observe("/api/token", response.status, startedAt);
   if (!response.ok) {
     throw new Error(`token refresh failed: ${response.status}`);
   }
   const json = (await response.json()) as TokenResponse;
+  info("spotify token refreshed", { expires_in_s: json.expires_in });
   const until = Date.now() + json.expires_in * 1000 - TOKEN_MARGIN_MS;
   return { value: json.access_token, until };
 }
@@ -72,10 +87,14 @@ async function get<T>(path: string): Promise<{ status: number; json: T | null }>
   const env = spotifyEnv();
   const bearer = await accessToken();
   const signal = AbortSignal.timeout(UPSTREAM_TIMEOUT_MS);
-  const response = await fetch(`${env.apiOrigin}${path}`, {
+  const requested = `${env.apiOrigin}${path}`;
+  const parsed = new URL(requested);
+  const startedAt = Date.now();
+  const response = await fetch(requested, {
     headers: { Authorization: `Bearer ${bearer}` },
     signal,
   });
+  observe(parsed.pathname, response.status, startedAt);
   if (response.status === 204) {
     return { status: 204, json: null };
   }

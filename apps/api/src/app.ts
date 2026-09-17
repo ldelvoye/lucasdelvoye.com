@@ -1,6 +1,8 @@
 import { Hono } from "hono";
+import { sentry } from "@sentry/hono/node";
 import type { ApiError, Health, NowPlaying, Play, Project, Smorg, SpotifyWeek, TopArtist } from "contract";
 import { ROUTES } from "contract";
+import { error } from "./log.ts";
 
 export type Loaders = {
   now: (coverWidth: number) => Promise<NowPlaying | null>;
@@ -29,13 +31,14 @@ function positiveInt(raw: string | undefined, name: string): number {
 
 export function createApp(loaders: Loaders): Hono {
   const app = new Hono();
+  app.use(sentry(app, { shouldHandleError: () => false }));
 
-  app.onError((error, c) => {
-    const body: ApiError = { error: error.message };
-    if (error instanceof BadQuery) {
+  app.onError((cause, c) => {
+    const body: ApiError = { error: cause.message };
+    if (cause instanceof BadQuery) {
       return c.json(body, 400);
     }
-    console.error(`${c.req.method} ${c.req.path} failed`, error);
+    error("request failed", { method: c.req.method, path: c.req.path }, cause);
     return c.json(body, 502);
   });
 

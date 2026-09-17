@@ -64,3 +64,15 @@ export function bucketEnv(): BucketEnv | null {
   const secretAccessKey = required("SPOTIFY_HISTORY_SECRET_ACCESS_KEY");
   return { bucket, endpoint, region, accessKeyId, secretAccessKey };
 }
+
+export function spotifyConfigured(): boolean {
+  try {
+    spotifyEnv();
+  } catch (cause) {
+    if (cause instanceof NotConfigured) {
+      return false;
+    }
+    throw cause;
+  }
+  return true;
+}

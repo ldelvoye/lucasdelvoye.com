@@ -4,8 +4,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "node --watch --env-file-if-exists=.env.local src/main.ts",
-    "start": "node src/main.ts",
+    "dev": "node --watch --env-file-if-exists=.env.local --disable-warning=DEP0205 --import ./src/instrument.ts src/main.ts",
+    "start": "node --disable-warning=DEP0205 --import ./src/instrument.ts src/main.ts",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "spotify:auth": "node --env-file=.env.local scripts/spotify-auth.mts"
@@ -13,6 +13,8 @@
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1131.0",
     "@hono/node-server": "^2.1.1",
+    "@sentry/hono": "10.75.0",
+    "@sentry/node": "10.75.0",
     "contract": "*",
     "hono": "^4.13.7"
   },
