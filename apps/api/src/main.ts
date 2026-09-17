@@ -1,12 +1,18 @@
+import * as Sentry from "@sentry/hono/node";
 import { serve } from "@hono/node-server";
 import { createApp } from "./app.ts";
+import { info } from "./log.ts";
+import { githubEnv } from "./projects/env.ts";
 import { projects } from "./projects/loader.ts";
 import { smorgVersion } from "./smorg.ts";
+import { persistent } from "./spotify/bucket.ts";
+import { spotifyConfigured } from "./spotify/env.ts";
 import { now, recent, topArtists, week } from "./spotify/loader.ts";
-import { start } from "./spotify/store.ts";
+import { start, stop } from "./spotify/store.ts";
 
 const DEFAULT_PORT = 8788;
 const MAX_PORT = 65535;
+const FLUSH_MS = 2000;
 
 function port(): number {
   const raw = process.env.PORT;
@@ -32,6 +38,30 @@ function port(): number {
 start();
 const app = createApp({ now, topArtists, recent, week, projects, smorgVersion });
 const listenPort = port();
-serve({ fetch: app.fetch, port: listenPort, hostname: "::" }, (info) => {
-  console.log(`api listening on [${info.address}]:${info.port}`);
+const server = serve({ fetch: app.fetch, port: listenPort, hostname: "::" }, (listening) => {
+  const github = githubEnv();
+  info("api started", {
+    port: listening.port,
+    spotify: spotifyConfigured(),
+    bucket: persistent(),
+    github_token: github.token !== null,
+    sentry: Sentry.isEnabled(),
+  });
 });
+
+let stopping = false;
+
+async function shutdown(signal: NodeJS.Signals): Promise<void> {
+  if (stopping) {
+    return;
+  }
+  stopping = true;
+  info("api stopping", { signal });
+  stop();
+  server.close();
+  await Sentry.flush(FLUSH_MS);
+  process.exit(0);
+}
+
+process.on("SIGTERM", shutdown);
+process.on("SIGINT", shutdown);

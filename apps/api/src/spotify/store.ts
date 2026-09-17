@@ -1,43 +1,62 @@
+import * as Sentry from "@sentry/hono/node";
 import { recentlyPlayed } from "./api.ts";
 import { loadPlays, persistent, savePlays } from "./bucket.ts";
 import { NotConfigured, spotifyEnv } from "./env.ts";
 import { mergePlays } from "./history.ts";
+import { error, info, warn } from "../log.ts";
 import type { Play } from "contract";
 
+type MonitorConfig = NonNullable<Parameters<typeof Sentry.withMonitor>[2]>;
+
 const POLL_MS = 5 * 60 * 1000;
+const MONITOR_SLUG = "spotify-history-poll";
+const MONITOR: MonitorConfig = {
+  schedule: { type: "interval", value: 5, unit: "minute" },
+  checkinMargin: 2,
+  maxRuntime: 2,
+  failureIssueThreshold: 2,
+  recoveryThreshold: 1,
+};
 
 let plays: Play[] = [];
 let readiness: Promise<void> | null = null;
 let timer: NodeJS.Timeout | null = null;
 
-function grewFrom(previous: Play[], merged: Play[]): boolean {
-  if (merged.length !== previous.length) {
-    return true;
-  }
+function countNew(previous: Play[], merged: Play[]): number {
   const oldTimes = new Set(previous.map((play) => play.playedAt));
+  let count = 0;
   for (const play of merged) {
     if (!oldTimes.has(play.playedAt)) {
-      return true;
+      count += 1;
     }
   }
-  return false;
+  return count;
 }
 
 async function poll(): Promise<void> {
   const incoming = await recentlyPlayed();
   const merged = mergePlays(plays, incoming, Date.now());
-  const grew = grewFrom(plays, merged);
+  const fresh = countNew(plays, merged);
+  const changed = fresh > 0 || merged.length !== plays.length;
   plays = merged;
-  if (grew) {
-    await savePlays(plays);
+  let written = false;
+  if (changed) {
+    written = await savePlays(plays);
   }
+  Sentry.metrics.gauge("spotify.history.plays", plays.length);
+  info("spotify history polled", {
+    plays_fetched: incoming.length,
+    plays_new: fresh,
+    plays_kept: plays.length,
+    bucket_written: written,
+  });
 }
 
 async function pollSafely(): Promise<void> {
   try {
-    await poll();
-  } catch (error) {
-    console.error("spotify history poll failed", error);
+    await Sentry.withMonitor(MONITOR_SLUG, poll, MONITOR);
+  } catch (cause) {
+    error("spotify history poll failed", {}, cause);
   }
 }
 
@@ -45,8 +64,11 @@ async function load(): Promise<void> {
   try {
     const stored = await loadPlays();
     plays = mergePlays(stored, [], Date.now());
-  } catch (error) {
-    console.error("spotify history load failed", error);
+    if (persistent()) {
+      info("spotify history restored", { plays_kept: plays.length });
+    }
+  } catch (cause) {
+    error("spotify history load failed", {}, cause);
   }
   await pollSafely();
 }
@@ -68,16 +90,21 @@ export function start(): void {
   }
   try {
     spotifyEnv();
-  } catch (error) {
-    if (error instanceof NotConfigured) {
-      console.warn(`spotify history poller not started: ${error.message}`);
+  } catch (cause) {
+    if (cause instanceof NotConfigured) {
+      warn("spotify history poller not started", { reason: cause.message });
       return;
     }
-    throw error;
-  }
-  if (!persistent()) {
-    console.warn("spotify history is memory only: no bucket configured");
+    throw cause;
   }
   ready();
   timer = setInterval(pollSafely, POLL_MS);
+}
+
+export function stop(): void {
+  if (timer === null) {
+    return;
+  }
+  clearInterval(timer);
+  timer = null;
 }

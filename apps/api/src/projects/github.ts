@@ -1,3 +1,4 @@
+import * as Sentry from "@sentry/hono/node";
 import { OWNER } from "./content.ts";
 import { githubEnv } from "./env.ts";
 import type { Commit } from "contract";
@@ -26,6 +27,26 @@ const USER_AGENT = "lucasdelvoye.com";
 const SHA_LENGTH = 7;
 const COMMIT_COUNT = 5;
 const UPSTREAM_TIMEOUT_MS = 4000;
+const RATE_LIMIT_METRIC = "github.rate_limit.remaining";
+
+let remaining: number | null = null;
+
+function recordRateLimit(response: Response): void {
+  const header = response.headers.get("x-ratelimit-remaining");
+  if (header === null) {
+    return;
+  }
+  const parsed = Number(header);
+  if (!Number.isInteger(parsed)) {
+    return;
+  }
+  remaining = parsed;
+  Sentry.metrics.gauge(RATE_LIMIT_METRIC, parsed);
+}
+
+export function lastRateLimitRemaining(): number | null {
+  return remaining;
+}
 
 async function get<T>(path: string): Promise<{ status: number; json: T | null }> {
   const env = githubEnv();
@@ -39,6 +60,7 @@ async function get<T>(path: string): Promise<{ status: number; json: T | null }>
   }
   const signal = AbortSignal.timeout(UPSTREAM_TIMEOUT_MS);
   const response = await fetch(`${env.apiOrigin}${path}`, { headers, signal });
+  recordRateLimit(response);
   if (response.status === 404) {
     throw new NotFound(path);
   }

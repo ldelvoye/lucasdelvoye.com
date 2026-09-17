@@ -11,4 +11,5 @@ COPY --chown=api:api apps/api apps/api
 COPY --chown=api:api packages/contract packages/contract
 USER api
 EXPOSE 8080
-CMD ["node", "apps/api/src/main.ts"]
+# DEP0205: the Sentry ESM loader still registers through module.register on Node 26
+CMD ["node", "--disable-warning=DEP0205", "--import", "./apps/api/src/instrument.ts", "apps/api/src/main.ts"]

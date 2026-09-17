@@ -1,5 +1,6 @@
 import { SMORG_FALLBACK_VERSION } from "contract";
 import { memo } from "./memo.ts";
+import { warn } from "./log.ts";
 
 const LATEST_RELEASE = "https://github.com/ldelvoye/smorg/releases/latest";
 const TAG_PATH = /\/releases\/tag\/v([0-9]+\.[0-9]+\.[0-9]+)$/;
@@ -26,8 +27,8 @@ async function lookupVersion(): Promise<string> {
 const latest = memo(VERSION_TTL_MS, async (): Promise<string> => {
   try {
     return await lookupVersion();
-  } catch (error) {
-    console.warn("smorg version lookup failed, using the pinned one", error);
+  } catch (cause) {
+    warn("smorg version lookup failed, using the pinned one", {}, cause);
     return SMORG_FALLBACK_VERSION;
   }
 });
