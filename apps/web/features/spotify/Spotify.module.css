@@ -348,7 +348,22 @@
   }
 }
 
-@container side (max-height: 540px) {
+@container side (max-height: 500px) {
+  .timeline {
+    padding-top: 8px;
+  }
+
+  .bins {
+    height: 28px;
+  }
+
+  .dlabel {
+    margin-top: 3px;
+    font-size: 9px;
+  }
+}
+
+@container side (max-height: 470px) {
   .timeline {
     display: none;
   }
