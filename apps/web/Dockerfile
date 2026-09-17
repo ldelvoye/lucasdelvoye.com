@@ -6,6 +6,9 @@ COPY apps/api/package.json apps/api/package.json
 COPY packages/contract/package.json packages/contract/package.json
 RUN npm ci
 COPY . .
+ARG SENTRY_AUTH_TOKEN
+ARG NEXT_PUBLIC_SENTRY_DSN
+ARG RAILWAY_GIT_COMMIT_SHA
 ENV NEXT_TELEMETRY_DISABLED=1
 RUN npm run build
 

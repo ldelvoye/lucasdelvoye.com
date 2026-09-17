@@ -39,6 +39,9 @@ export default defineRailway(() => {
       RAILWAY_DOCKERFILE_PATH: "apps/web/Dockerfile",
       NEXT_TELEMETRY_DISABLED: "1",
       API_ORIGIN: `http://\${{api.RAILWAY_PRIVATE_DOMAIN}}:${API_PORT}`,
+      SENTRY_DSN: SENTRY_DSN,
+      NEXT_PUBLIC_SENTRY_DSN: SENTRY_DSN,
+      SENTRY_AUTH_TOKEN: preserve(),
     },
     domains: ["lucasdelvoye.com", "www.lucasdelvoye.com"],
   });
