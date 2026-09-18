@@ -4,6 +4,9 @@ import type { TopArtist } from "contract";
 import styles from "./Spotify.module.css";
 
 export function TopArtists({ artists }: { artists: TopArtist[] }): ReactElement {
+  if (artists.length === 0) {
+    return <span className={styles.idle}>no data yet</span>;
+  }
   const cells = artists.map((artist, index) => {
     const rank = index + 1;
     return (

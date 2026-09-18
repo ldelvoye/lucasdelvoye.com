@@ -9,6 +9,8 @@ import { NowPlaying } from "./NowPlaying";
 import { RecentPlays } from "./RecentPlays";
 import { TopArtists } from "./TopArtists";
 import { Watch } from "./Watch";
+import { reportApiFailure } from "@/lib/api";
+import type { NowPlaying as NowPlayingData, TopArtist } from "contract";
 import styles from "./Spotify.module.css";
 
 const TAB_ID = "spotify";
@@ -16,10 +18,28 @@ const PANE_COVER = 300;
 const RECENT_COUNT = 10;
 const WATCH_SECONDS = 15;
 
+async function currentOrNone(): Promise<NowPlayingData | null> {
+  try {
+    return await now(PANE_COVER);
+  } catch (cause) {
+    reportApiFailure("now playing could not load", cause);
+    return null;
+  }
+}
+
+async function artistsOrNone(): Promise<TopArtist[]> {
+  try {
+    return await topArtists();
+  } catch (cause) {
+    reportApiFailure("top artists could not load", cause);
+    return [];
+  }
+}
+
 async function loadPanel() {
   const [current, artists, plays, listening] = await Promise.all([
-    now(PANE_COVER),
-    topArtists(),
+    currentOrNone(),
+    artistsOrNone(),
     recent(RECENT_COUNT),
     week(),
   ]);
