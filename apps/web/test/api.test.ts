@@ -1,5 +1,11 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { fetchJson } from "../lib/api";
+import * as Sentry from "@sentry/nextjs";
+import { ApiFailure, fetchJson, reportApiFailure } from "../lib/api";
+
+vi.mock("@sentry/nextjs", () => ({
+  logger: { info: vi.fn(), warn: vi.fn(), error: vi.fn() },
+  captureException: vi.fn(),
+}));
 
 describe("fetchJson", () => {
   afterEach(() => {
@@ -34,5 +40,23 @@ describe("fetchJson", () => {
     });
     await fetchJson("/spotify/now");
     expect(seen).toBeInstanceOf(AbortSignal);
+  });
+});
+
+describe("reportApiFailure", () => {
+  afterEach(() => {
+    vi.clearAllMocks();
+    vi.restoreAllMocks();
+  });
+
+  it("raises an issue only when the api never answered", () => {
+    vi.spyOn(console, "warn").mockImplementation(() => {});
+    vi.spyOn(console, "error").mockImplementation(() => {});
+
+    reportApiFailure("now playing could not load", new ApiFailure("/spotify/now", 502));
+    expect(Sentry.captureException).not.toHaveBeenCalled();
+
+    reportApiFailure("now playing could not load", new TypeError("fetch failed"));
+    expect(Sentry.captureException).toHaveBeenCalledTimes(1);
   });
 });

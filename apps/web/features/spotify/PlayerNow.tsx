@@ -3,7 +3,7 @@ import type { ReactElement } from "react";
 import { Player } from "@/components/shell/Player";
 import { now } from "./loader";
 import type { NowPlaying } from "contract";
-import { error } from "@/lib/log";
+import { reportApiFailure } from "@/lib/api";
 
 const DOCK_COVER = 64;
 
@@ -13,7 +13,7 @@ export async function PlayerNow(): Promise<ReactElement> {
   try {
     current = await now(DOCK_COVER);
   } catch (cause) {
-    error("player could not load", {}, cause);
+    reportApiFailure("player could not load", cause);
   }
   return <Player now={current} pending={false} />;
 }
