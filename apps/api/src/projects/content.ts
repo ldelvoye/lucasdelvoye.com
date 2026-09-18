@@ -5,7 +5,12 @@ export type ProjectEntry = { name: string; install: string; run: string; clip: C
 export const OWNER = "ldelvoye";
 
 export const PROJECTS: ProjectEntry[] = [
-  { name: "smorg", install: "brew install ldelvoye/tap/smorg", run: "smorg", clip: null },
+  {
+    name: "smorg",
+    install: "brew install ldelvoye/tap/smorg",
+    run: "smorg",
+    clip: { src: "/projects/smorg.mp4", width: 1280, height: 720 },
+  },
   {
     name: "taco-shells",
     install: "git clone https://github.com/ldelvoye/taco-shells",
