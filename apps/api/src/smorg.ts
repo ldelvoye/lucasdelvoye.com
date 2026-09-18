@@ -5,6 +5,7 @@ import { warn } from "./log.ts";
 const LATEST_RELEASE = "https://github.com/ldelvoye/smorg/releases/latest";
 const TAG_PATH = /\/releases\/tag\/v([0-9]+\.[0-9]+\.[0-9]+)$/;
 const VERSION_TTL_MS = 60 * 60 * 1000;
+const VERSION_STALE_MS = 24 * 60 * 60 * 1000;
 const LOOKUP_TIMEOUT_MS = 3000;
 
 async function lookupVersion(): Promise<string> {
@@ -24,14 +25,17 @@ async function lookupVersion(): Promise<string> {
   return match[1];
 }
 
-const latest = memo(VERSION_TTL_MS, async (): Promise<string> => {
-  try {
-    return await lookupVersion();
-  } catch (cause) {
-    warn("smorg version lookup failed, using the pinned one", {}, cause);
-    return SMORG_FALLBACK_VERSION;
-  }
-});
+const latest = memo(
+  { name: "smorg.version", ttlMs: VERSION_TTL_MS, staleMs: VERSION_STALE_MS },
+  async (): Promise<string> => {
+    try {
+      return await lookupVersion();
+    } catch (cause) {
+      warn("smorg version lookup failed, using the pinned one", {}, cause);
+      return SMORG_FALLBACK_VERSION;
+    }
+  },
+);
 
 export function smorgVersion(): Promise<string> {
   return latest.get();

@@ -15,6 +15,7 @@ import type { Project } from "contract";
 import { languagesOf } from "./shape.ts";
 
 const HOUR_MS = 60 * 60 * 1000;
+const DAY_MS = 24 * 60 * 60 * 1000;
 
 async function loadProject(entry: ProjectEntry): Promise<Project | null> {
   let repository: ApiRepo;
@@ -82,7 +83,7 @@ async function loadAll(): Promise<Project[]> {
   return present;
 }
 
-const all = memo(HOUR_MS, loadAll);
+const all = memo({ name: "projects", ttlMs: HOUR_MS, staleMs: DAY_MS }, loadAll);
 
 let last: Project[] | null = null;
 

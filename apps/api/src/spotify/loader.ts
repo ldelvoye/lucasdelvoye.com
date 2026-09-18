@@ -5,18 +5,26 @@ import type { NowPlaying, Play, SpotifyWeek, TopArtist } from "contract";
 import { history, ready } from "./store.ts";
 
 const NOW_TTL_MS = 5 * 1000;
+const NOW_STALE_MS = 60 * 1000;
 const TOP_TTL_MS = 60 * 60 * 1000;
+const TOP_STALE_MS = 24 * 60 * 60 * 1000;
 const AVATAR_WIDTH = 160;
 
 type Observed = { at: number; playing: Current | null };
 
-const current = memo(NOW_TTL_MS, async (): Promise<Observed> => {
-  const at = Date.now();
-  const playing = await currentlyPlaying();
-  return { at, playing };
-});
+const current = memo(
+  { name: "spotify.now", ttlMs: NOW_TTL_MS, staleMs: NOW_STALE_MS },
+  async (): Promise<Observed> => {
+    const at = Date.now();
+    const playing = await currentlyPlaying();
+    return { at, playing };
+  },
+);
 
-const top = memo(TOP_TTL_MS, topArtistsShort);
+const top = memo(
+  { name: "spotify.top", ttlMs: TOP_TTL_MS, staleMs: TOP_STALE_MS },
+  topArtistsShort,
+);
 
 function hasEnded(observed: Observed): boolean {
   if (observed.playing === null) {
@@ -33,10 +41,11 @@ function hasEnded(observed: Observed): boolean {
 export async function now(coverWidth: number): Promise<NowPlaying | null> {
   let observed = await current.get();
   if (hasEnded(observed)) {
-    observed = await current.refresh();
+    observed = await current.renew();
   }
-  if (observed.playing !== null) {
-    const track = observed.playing.track;
+  const playing = observed.playing;
+  if (playing !== null && !hasEnded(observed)) {
+    const track = playing.track;
     const cover = coverUrl(track.album.images, coverWidth);
     const first = track.artists[0];
     let artist = "";
@@ -49,8 +58,8 @@ export async function now(coverWidth: number): Promise<NowPlaying | null> {
       album: track.album.name,
       cover,
       durationMs: track.duration_ms,
-      progressMs: observed.playing.progressMs,
-      playing: observed.playing.playing,
+      progressMs: playing.progressMs,
+      playing: playing.playing,
       at: observed.at,
       playedAt: null,
     };

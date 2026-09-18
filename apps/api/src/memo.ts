@@ -1,37 +1,64 @@
-type Entry<T> = { value: T; expiresAt: number };
+import { warn } from "./log.ts";
+
+type Entry<T> = { value: T; at: number };
+
+export type MemoOptions = { name: string; ttlMs: number; staleMs: number };
 
 export type Memo<T> = {
   get: () => Promise<T>;
-  refresh: () => Promise<T>;
+  renew: () => Promise<T>;
 };
 
-export function memo<T>(ttlMs: number, load: () => Promise<T>): Memo<T> {
+export function memo<T>(options: MemoOptions, load: () => Promise<T>): Memo<T> {
   let entry: Entry<T> | null = null;
   let inflight: Promise<T> | null = null;
 
-  async function refresh(): Promise<T> {
+  function isFresh(candidate: Entry<T>): boolean {
+    return Date.now() < candidate.at + options.ttlMs;
+  }
+
+  function isUsable(candidate: Entry<T>): boolean {
+    return Date.now() < candidate.at + options.ttlMs + options.staleMs;
+  }
+
+  async function reload(): Promise<T> {
     if (inflight !== null) {
       return inflight;
     }
     inflight = load();
     try {
       const value = await inflight;
-      entry = { value, expiresAt: Date.now() + ttlMs };
+      entry = { value, at: Date.now() };
       return value;
     } finally {
       inflight = null;
     }
   }
 
+  async function renew(): Promise<T> {
+    try {
+      return await reload();
+    } catch (cause) {
+      if (entry === null) {
+        throw cause;
+      }
+      if (!isUsable(entry)) {
+        throw cause;
+      }
+      const age = Date.now() - entry.at;
+      warn("serving a stale value", { memo: options.name, age_ms: age });
+      return entry.value;
+    }
+  }
+
   async function get(): Promise<T> {
-    const now = Date.now();
     if (entry !== null) {
-      if (entry.expiresAt > now) {
+      if (isFresh(entry)) {
         return entry.value;
       }
     }
-    return refresh();
+    return renew();
   }
 
-  return { get, refresh };
+  return { get, renew };
 }
