@@ -33,12 +33,26 @@ type Token = { value: string; until: number };
 
 const UPSTREAM_METRIC = "spotify.upstream.duration";
 
+const NO_RESPONSE = 0;
+
 function observe(path: string, status: number, startedAt: number): void {
   const elapsed = Date.now() - startedAt;
   Sentry.metrics.distribution(UPSTREAM_METRIC, elapsed, {
     unit: "millisecond",
     attributes: { path, status },
   });
+}
+
+async function timedFetch(path: string, url: string, init: RequestInit): Promise<Response> {
+  const startedAt = Date.now();
+  try {
+    const response = await fetch(url, init);
+    observe(path, response.status, startedAt);
+    return response;
+  } catch (cause) {
+    observe(path, NO_RESPONSE, startedAt);
+    throw cause;
+  }
 }
 
 let token: Token | null = null;
@@ -49,14 +63,12 @@ async function refreshToken(): Promise<Token> {
   const basic = Buffer.from(`${env.clientId}:${env.clientSecret}`).toString("base64");
   const body = new URLSearchParams({ grant_type: "refresh_token", refresh_token: env.refreshToken });
   const signal = AbortSignal.timeout(UPSTREAM_TIMEOUT_MS);
-  const startedAt = Date.now();
-  const response = await fetch(`${env.accountsOrigin}/api/token`, {
+  const response = await timedFetch("/api/token", `${env.accountsOrigin}/api/token`, {
     method: "POST",
     headers: { Authorization: `Basic ${basic}`, "Content-Type": "application/x-www-form-urlencoded" },
     body,
     signal,
   });
-  observe("/api/token", response.status, startedAt);
   if (!response.ok) {
     throw new Error(`token refresh failed: ${response.status}`);
   }
@@ -89,12 +101,10 @@ async function get<T>(path: string): Promise<{ status: number; json: T | null }>
   const signal = AbortSignal.timeout(UPSTREAM_TIMEOUT_MS);
   const requested = `${env.apiOrigin}${path}`;
   const parsed = new URL(requested);
-  const startedAt = Date.now();
-  const response = await fetch(requested, {
+  const response = await timedFetch(parsed.pathname, requested, {
     headers: { Authorization: `Bearer ${bearer}` },
     signal,
   });
-  observe(parsed.pathname, response.status, startedAt);
   if (response.status === 204) {
     return { status: 204, json: null };
   }
