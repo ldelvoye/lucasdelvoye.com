@@ -16,6 +16,6 @@ export const PROJECTS: ProjectEntry[] = [
     name: "lucasdelvoye.com",
     install: "git clone https://github.com/ldelvoye/lucasdelvoye.com",
     run: "open https://lucasdelvoye.com",
-    clip: null,
+    clip: { src: "/projects/lucasdelvoye-com.mp4", width: 1280, height: 720 },
   },
 ];

@@ -1,10 +1,10 @@
-import Image from "next/image";
 import type { CSSProperties, ReactElement, ReactNode } from "react";
 import { Session } from "@/components/reveal/Session";
 import { staggeredDelay } from "@/components/reveal/schedule";
 import { KeyValue, type Entry } from "@/components/ui/KeyValue";
 import { Tag } from "@/components/ui/Tag";
 import type { Project } from "contract";
+import { ProjectClip } from "./ProjectClip";
 import { sparklineOf } from "./shape";
 import styles from "./Projects.module.css";
 
@@ -75,21 +75,6 @@ function Sparkline({ weeks }: { weeks: number[] }): ReactElement {
 
 export function ProjectDetail({ project }: { project: Project }): ReactElement {
   const demoLabel = `${project.name} demo`;
-  let clip: ReactNode = <span className={styles.frame} role="img" aria-label={demoLabel} />;
-  if (project.clip !== null) {
-    clip = (
-      <span className={styles.frame}>
-        <Image
-          src={project.clip.src}
-          width={project.clip.width}
-          height={project.clip.height}
-          alt={demoLabel}
-          unoptimized
-          className={styles.clip}
-        />
-      </span>
-    );
-  }
 
   const entries: Entry[] = [
     { label: "stars", value: String(project.stars), tone: "strong" },
@@ -155,7 +140,7 @@ export function ProjectDetail({ project }: { project: Project }): ReactElement {
           reveal="fade"
           className={styles.command}
         >
-          {clip}
+          <ProjectClip clip={project.clip} label={demoLabel} />
         </Session>
       </div>
       <span className={styles.rule} aria-hidden="true" />
