@@ -1,5 +1,6 @@
 import * as Sentry from "@sentry/hono/node";
 import { serve } from "@hono/node-server";
+import net from "node:net";
 import { createApp } from "./app.ts";
 import { info } from "./log.ts";
 import { githubEnv } from "./projects/env.ts";
@@ -13,6 +14,8 @@ import { start, stop } from "./spotify/store.ts";
 const DEFAULT_PORT = 8788;
 const MAX_PORT = 65535;
 const FLUSH_MS = 2000;
+// Railway has no IPv6 egress, so the IPv4 attempt must outlast one lost SYN (retried after 1s)
+const CONNECT_ATTEMPT_MS = 2000;
 
 function port(): number {
   const raw = process.env.PORT;
@@ -35,6 +38,7 @@ function port(): number {
   return parsed;
 }
 
+net.setDefaultAutoSelectFamilyAttemptTimeout(CONNECT_ATTEMPT_MS);
 start();
 const app = createApp({ now, topArtists, recent, week, projects, smorgVersion });
 const listenPort = port();
