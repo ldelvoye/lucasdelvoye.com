@@ -15,7 +15,7 @@ export const PROJECTS: ProjectEntry[] = [
     name: "taco-shells",
     install: "git clone https://github.com/ldelvoye/taco-shells",
     run: "taco",
-    clip: null,
+    clip: { src: "/projects/taco-shells.mp4", width: 1280, height: 720 },
   },
   {
     name: "lucasdelvoye.com",
