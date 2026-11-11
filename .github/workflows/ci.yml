@@ -10,6 +10,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
+      - name: Lockfile resolves from public npm
+        run: "! grep -nE '\"resolved\": \"https?://' package-lock.json | grep -v '\"resolved\": \"https://registry.npmjs.org/'"
       - uses: actions/setup-node@v5
         with:
           node-version-file: .nvmrc
